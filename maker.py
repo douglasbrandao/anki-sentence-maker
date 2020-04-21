@@ -14,13 +14,7 @@ class SentenceMaker:
         soup = BeautifulSoup(url.text, 'html.parser')
 
         name = soup.find('h1').contents[0]
-
-        try:
-            ipa = soup.find('span', class_='phon').contents[0]
-        except AttributeError as error:
-            print("Phonetic transcription haven't found for {}. Error: {}".format(name, error))
-            ipa = ''
-
+        ipa = soup.find('span', class_='phon').contents[0]
         definitions = [s.text for s in soup.find_all('span', class_='def')][:2]
         examples = [s.text for s in soup.select('ul.examples > li > span.x')]
 
@@ -37,13 +31,7 @@ class SentenceMaker:
         soup = BeautifulSoup(url.text, 'html.parser')
 
         name = [s.text for s in soup.select('div.di-title')][0]
-
-        try:
-            ipa = [s.text for s in soup.find_all('span', class_='pron dpron')][0]
-        except IndexError as error:
-            print("Phonetic transcription haven't found for {}. Error: {}".format(name, error))
-            ipa = ''
-
+        ipa = [s.text for s in soup.find_all('span', class_='pron dpron')]
         definitions = [s.text for s in soup.find_all('div', class_='def ddef_d db')][:2]
         examples = [s.text for s in soup.find_all('div', class_='examp dexamp')]
 
@@ -56,17 +44,16 @@ class SentenceMaker:
 
     def find_word(self):
 
-        # oxford dictionary
         try:
             oxford = self.scrap_oxford()
             return oxford
         except AttributeError as error:
             print(error)
-            print("We haven't found on Oxford Dictionary. I'll try the next one...")
+            print("We haven't found on Oxford Dictionary. I'll try the next one!")
 
-        # cambridge dictionary
         try:
             cambridge = self.scrap_cambridge()
             return cambridge
-        except AttributeError:
-            print("We haven't found on Cambridge Dictionary. I'll try the next one...")
+        except AttributeError as error:
+            print(error)
+            print("We haven't found on Cambridge Dictionary. I'll try the next one!")

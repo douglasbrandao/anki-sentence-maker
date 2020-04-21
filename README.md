@@ -23,7 +23,7 @@ Anki Sentence Maker is a personal project in progress to help me a increase my v
 
 ## Need to be implemented
 
-* Create a phonetic transcription to words we could not found find on the dictionary
+* Create a phonetic transcription to words we could not found on the dictionary
 > Examples: fall short, run at...
 
 ## To the future
