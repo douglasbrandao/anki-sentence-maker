@@ -1,2 +1,4 @@
 venv/
 main.py
+/sentence-maker-api.py
+/sentences.csv

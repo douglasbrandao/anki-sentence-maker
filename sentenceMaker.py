@@ -1,25 +1,61 @@
 import requests
-import json
+from bs4 import BeautifulSoup
 
 
 class SentenceMaker:
 
-    def __init__(self, app_id, app_key, word, language):
-        self.app_id = app_id
-        self.app_key = app_key
+    def __init__(self, word):
         self.word = word
-        self.language = language
 
-    def make_request(self):
-        url = "https://od-api.oxforddictionaries.com:443/api/v2/entries/" + self.language + "/" + self.word.lower()
-        return requests.get(url, headers={"app_id": self.app_id, "app_key": self.app_key})
+    def scrap_oxford(self):
+        url = requests.get('https://www.oxfordlearnersdictionaries.com/us/definition/english/' + self.word)
+        soup = BeautifulSoup(url.text, 'html.parser')
 
-    def get_data(self):
-        data = self.make_request().json()
-        infos = {
-            'word': data['results'][0]['word'], #string
-            'phonetic': data['results'][0]['lexicalEntries'][0]['pronunciations'][0]['phoneticSpelling'], #string
-            'definition': data['results'][0]['lexicalEntries'][0]['entries'][0]['senses'][0]['definitions'], #array
-            'examples': data['results'][0]['lexicalEntries'][0]['entries'][0]['senses'][0]['examples'] #array
+        name = soup.find('h1').contents[0]
+        ipa = soup.find('span', class_='phon').contents[0]
+        definitions = [s.text for s in soup.find_all('span', class_='def')][:2]
+        examples = [s.text for s in soup.select('ul.examples > li > span.x')]
+
+        return {
+            'name': name,
+            'ipa': ipa,
+            'definitions': definitions,
+            'examples': examples
         }
-        return infos
+
+    def scrap_cambridge(self):
+        temp = self.word
+        word = temp
+        phrasal_verb = temp.split()
+
+        if len(phrasal_verb) > 1:
+            word = '-'.join(phrasal_verb)
+
+        url = requests.get('https://dictionary.cambridge.org/dictionary/english/' + word)
+        soup = BeautifulSoup(url.text, 'html.parser')
+
+        name = [s.text for s in soup.select('div.di-title')][0]
+        ipa = [s.text for s in soup.find_all('span', class_='pron dpron')][0]
+        definitions = [s.text for s in soup.find_all('div', class_='def ddef_d db')]
+        examples = [s.text for s in soup.find_all('div', class_='examp dexamp')]
+
+        return {
+            'name': name,
+            'ipa': ipa,
+            'definitions': definitions,
+            'examples': examples
+        }
+
+    def find_word(self):
+
+        try:
+            oxford = self.scrap_oxford()
+            return oxford
+        except AttributeError:
+            print("We haven't found on Oxford Dictionary. I'll try the next one...")
+
+        try:
+            cambridge = self.scrap_cambridge()
+            return cambridge
+        except AttributeError:
+            print("We haven't found on Cambridge Dictionary. I'll try the next one...")
