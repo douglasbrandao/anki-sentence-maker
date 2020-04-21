@@ -21,6 +21,16 @@ Anki Sentence Maker is a personal project in progress to help me a increase my v
 * Cambridge Dictionary
 * Oxford Dictionary
 
+## Need to be implemented
+
+* Create a phonetic transcription to words we could not found find on the dictionary
+> Examples: fall short, run at...
+
+## To the future
+
+* Different languages to look it up
+* Create a easier interface to use
+
 ## Author
 
 [Douglas Brandão](https://github.com/douglasbrandao)

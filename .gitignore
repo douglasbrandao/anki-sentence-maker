@@ -139,6 +139,4 @@ cython_debug/
 
 # My project
 
-main.py
 /sentence-maker-api.py
-/sentences.csv
