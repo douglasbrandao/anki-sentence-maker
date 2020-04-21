@@ -1,15 +1,16 @@
-from maker import SentenceMaker
+from app.steps.maker import SentenceMaker
 import csv
 
 if __name__ == '__main__':
 
-    words_from_user = 'fall short,eve,gig,cram'
+    words_from_user = 'fall short,run at,gig,run'
     words = words_from_user.split(',')
 
     words_infos_returned = []
 
     for word in words:
         s = SentenceMaker(word)
+        print(s.find_word())
         words_infos_returned.append(s.find_word())
 
     with open('sentences.csv', 'w', encoding='utf-8', newline='') as file:
