@@ -1,6 +1,6 @@
 import requests
-from app.utils.reformat_word import reformat_word
-from app.utils.split_word import split_word
+from utils.reformat_word import reformat_word
+from utils import split_word
 from bs4 import BeautifulSoup
 
 
@@ -13,6 +13,12 @@ class SentenceMaker:
     def scrap_oxford(self):
         word = reformat_word(self.word)
         url = requests.get('https://www.oxfordlearnersdictionaries.com/us/definition/english/' + word)
+
+        if 'Word not found in the dictionary' in url.text:
+            raise ValueError(f"This word {word} was typed correctly? We can't find it on Oxford.")
+
+        print(f'We have found {word} on Oxford!')
+
         soup = BeautifulSoup(url.text, 'html.parser')
         name = soup.find('h1').contents[0]
 
@@ -28,7 +34,7 @@ class SentenceMaker:
         examples = [s.text for s in soup.select('ul.examples > li > span.x')]
 
         if not examples:
-            raise AttributeError("We haven't found a list of examples on Oxford. I'll try the next one.")
+            raise IndexError("We haven't found a list of examples on Oxford. I'll try the next one.")
 
         return {
             'name': name,
@@ -40,6 +46,12 @@ class SentenceMaker:
     def scrap_cambridge(self):
         word = reformat_word(self.word)
         url = requests.get('https://dictionary.cambridge.org/dictionary/english/' + word)
+
+        if 'Search suggestions for' in url.text or 'Get clear definitions and audio' in url.text:
+            raise ValueError(f"This word {word} was typed correctly? We can't find it on Cambridge.")
+
+        print(f'We have found {word} on Cambridge!')
+
         soup = BeautifulSoup(url.text, 'html.parser')
 
         name = [s.text for s in soup.select('div.di-title')][0]
@@ -56,7 +68,7 @@ class SentenceMaker:
         examples = [s.text for s in soup.find_all('div', class_='examp dexamp')]
 
         if not examples:
-            raise AttributeError("We haven't found a list of examples on Cambridge. I'll try the next one.")
+            raise IndexError("We haven't found a list of examples on Cambridge. I'll try the next one.")
 
         return {
             'name': name,
@@ -85,13 +97,15 @@ class SentenceMaker:
         try:
             oxford = self.scrap_oxford()
             return oxford
-        except AttributeError as error:
+        except IndexError as error:
+            print(error)
+        except ValueError as error:
             print(error)
 
         try:
             cambridge = self.scrap_cambridge()
             return cambridge
-        except AttributeError as error:
-            print(error)
         except IndexError as error:
+            print(error)
+        except ValueError as error:
             print(error)
