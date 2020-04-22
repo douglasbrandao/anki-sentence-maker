@@ -1,14 +1,10 @@
 from steps.maker import SentenceMaker
 import csv
-import argparse
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser('Look up words in a dictionary')
-    parser.add_argument('lookup', type=str, nargs='+')
-    args = parser.parse_args()
-
-    words = args.lookup
+    words_typed = input('Which words do you want to look up on the dictionaries?\n')
+    words = words_typed.strip().split(',')
     words_infos_returned = []
 
     for word in words:

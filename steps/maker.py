@@ -1,6 +1,6 @@
 import requests
-from utils.reformat_word import reformat_word
-from utils import split_word
+from .utils.reformat_word import reformat_word
+from .utils.split_word import split_word
 from bs4 import BeautifulSoup
 
 
