@@ -6,8 +6,9 @@ from bs4 import BeautifulSoup
 
 class SentenceMaker:
 
-    def __init__(self, word):
+    def __init__(self, word, limit):
         self.word = word
+        self.limit = limit
 
     def scrap_oxford(self):
         word = reformat_word(self.word)
@@ -21,7 +22,7 @@ class SentenceMaker:
             phrasal_verb = split_word(self.word)
             verb = phrasal_verb[0]
             adverb = phrasal_verb[1]
-            ipa = '\{}/'.format(self.find_phonetic(verb, adverb))
+            ipa = '/{}/'.format(self.find_phonetic(verb, adverb))
 
         definitions = [s.text for s in soup.find_all('span', class_='def')][:2]
         examples = [s.text for s in soup.select('ul.examples > li > span.x')]
@@ -33,7 +34,7 @@ class SentenceMaker:
             'name': name,
             'ipa': ipa,
             'definitions': definitions,
-            'examples': examples[0:3]
+            'examples': examples[0:self.limit]
         }
 
     def scrap_cambridge(self):
@@ -49,7 +50,7 @@ class SentenceMaker:
             phrasal_verb = split_word(self.word)
             verb = phrasal_verb[0]
             adverb = phrasal_verb[1]
-            ipa = '\{}/'.format(self.find_phonetic(verb, adverb))
+            ipa = '/{}/'.format(self.find_phonetic(verb, adverb))
 
         definitions = [s.text for s in soup.find_all('div', class_='def ddef_d db')][:2]
         examples = [s.text for s in soup.find_all('div', class_='examp dexamp')]
@@ -61,7 +62,7 @@ class SentenceMaker:
             'name': name,
             'ipa': ipa,
             'definitions': definitions,
-            'examples': examples[0:3]
+            'examples': examples[0:self.limit]
         }
 
     @staticmethod
