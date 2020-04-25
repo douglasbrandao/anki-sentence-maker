@@ -8,7 +8,8 @@ if __name__ == '__main__':
     words_infos_returned = []
 
     for word in words:
-        s = SentenceMaker(word, 3)
+        # SentenceMaker(word, maximum_definitions, minimum_examples, maximum_examples)
+        s = SentenceMaker(word, 2, 2, 3)
         words_infos_returned.append(s.find_word())
 
     words_infos_returned = [x for x in words_infos_returned if x is not None]

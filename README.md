@@ -5,7 +5,7 @@ Anki Sentence Maker is a personal project in progress to help me a increase my v
 ## How it is going to work
 
 * User will give a list of words
-* The script will look it up on a variety of dictionaries
+* The script will look it up in a variety of dictionaries
 * The script will create a .csv file with rows in the format below
 
 ## Row format
@@ -23,8 +23,6 @@ Anki Sentence Maker is a personal project in progress to help me a increase my v
 
 ## Need to be implemented
 
-* Create a phonetic transcription to words we could not found on the dictionary
-> Examples: fall short, run at...
 * Minimum of sentences
 > Example: The user could want at least 3 sentences of a word, but sometimes in one dictionary we can't find this minimum of sentences, so we have to look it up in other dictionaries to attain this minimum.
 * Put others dictionaries as Collins Dictionary, MacMillan, etc.
