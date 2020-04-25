@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-from .utils.split_word import split_word
 from .utils.reformat_word import reformat_word
 
 
@@ -25,7 +24,7 @@ class SentenceMaker:
         try:
             ipa = soup.find('span', attrs={'class': 'phon'}).text
         except AttributeError:
-            word_to_list = split_word(self.word)
+            word_to_list = self.word.split()
             phonetic = self.find_phonetic(word_to_list)
             ipa = '/{}/'.format(phonetic)
 
@@ -57,7 +56,7 @@ class SentenceMaker:
         try:
             ipa = soup.select('span.us.dpron-i > span.pron.dpron', limit=1)[0].text
         except IndexError:
-            word_to_list = split_word(self.word)
+            word_to_list = self.word.split()
             phonetic = self.find_phonetic(word_to_list)
             ipa = '/{}/'.format(phonetic)
 
