@@ -1,5 +1,6 @@
-from steps.maker import SentenceMaker
 import csv
+from datetime import date
+from steps.maker import SentenceMaker
 
 if __name__ == '__main__':
 
@@ -7,18 +8,18 @@ if __name__ == '__main__':
     words = words_typed.strip().split(',')
     words_infos_returned = []
 
+    # SentenceMaker(word, maximum_definitions, minimum_examples, maximum_examples)
     for word in words:
-        # SentenceMaker(word, maximum_definitions, minimum_examples, maximum_examples)
-        s = SentenceMaker(word, 2, 2, 3)
+        s = SentenceMaker(word, 2, 3, 10)
         words_infos_returned.append(s.find_word())
 
     words_infos_returned = [x for x in words_infos_returned if x is not None]
 
-    with open('sentences.csv', 'w', encoding='utf-8', newline='') as file:
+    brazil_date_format = date.today().strftime('%d-%m-%y')
+
+    with open(f"sentences-{brazil_date_format}.csv", 'w', encoding='utf-8', newline='') as file:
         fieldnames = ['sentence', 'information']
         writer = csv.DictWriter(file, fieldnames=fieldnames)
-
-        writer.writeheader()
 
         if words_infos_returned:
             for info in words_infos_returned:

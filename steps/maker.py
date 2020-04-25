@@ -1,7 +1,7 @@
 import requests
-from .utils.reformat_word import reformat_word
-from .utils.split_word import split_word
 from bs4 import BeautifulSoup
+from .utils.split_word import split_word
+from .utils.reformat_word import reformat_word
 
 
 class SentenceMaker:
@@ -25,10 +25,8 @@ class SentenceMaker:
         try:
             ipa = soup.find('span', attrs={'class': 'phon'}).text
         except AttributeError:
-            phrasal_verb = split_word(self.word)
-            verb = phrasal_verb[0]
-            adverb = phrasal_verb[1]
-            phonetic = self.find_phonetic(verb, adverb)
+            word_to_list = split_word(self.word)
+            phonetic = self.find_phonetic(word_to_list)
             ipa = '/{}/'.format(phonetic)
 
         definitions = [s.text for s in soup.find_all('span', class_='def')]
@@ -59,14 +57,17 @@ class SentenceMaker:
         try:
             ipa = soup.select('span.us.dpron-i > span.pron.dpron', limit=1)[0].text
         except IndexError:
-            phrasal_verb = split_word(self.word)
-            verb = phrasal_verb[0]
-            adverb = phrasal_verb[1]
-            phonetic = self.find_phonetic(verb, adverb)
+            word_to_list = split_word(self.word)
+            phonetic = self.find_phonetic(word_to_list)
             ipa = '/{}/'.format(phonetic)
 
         definitions = [s.text for s in soup.find_all('div', class_='def ddef_d db')]
         examples = [s.text for s in soup.find_all('div', class_='examp dexamp')]
+
+        dataset_examples = soup.find('div', attrs={'id': 'dataset-example'})
+
+        if dataset_examples is not None:
+            examples = [s.text.strip() for s in soup.find_all('span', class_='deg')]
 
         if not examples:
             raise IndexError("We haven't found a list of examples on Cambridge. I'll try the next one.")
@@ -81,19 +82,17 @@ class SentenceMaker:
         }
 
     @staticmethod
-    def find_phonetic(word1, word2):
-        verb = requests.get('https://www.oxfordlearnersdictionaries.com/us/definition/english/' + word1)
-        adverb = requests.get('https://www.oxfordlearnersdictionaries.com/us/definition/english/' + word2)
+    def find_phonetic(*args):
 
-        soup_verb = BeautifulSoup(verb.text, 'html.parser')
-        soup_adverb = BeautifulSoup(adverb.text, 'html.parser')
+        ipa, words = '', args[0]
 
-        verb_ipa = soup_verb.find('span', attrs={'class': 'phon'}).text
-        adverb_ipa = soup_adverb.find('span', attrs={'class': 'phon'}).text
+        for word in words:
+            html = requests.get('https://www.oxfordlearnersdictionaries.com/us/definition/english/' + word)
+            soup = BeautifulSoup(html.text, 'html.parser')
+            phonetic = soup.find('span', attrs={'class': 'phon'}).text
+            ipa += '{} '.format(phonetic)
 
-        ipa = '{} {}'.format(verb_ipa, adverb_ipa)
-
-        return ''.join(a for a in ipa if a not in '\/')
+        return ''.join(a for a in ipa if a not in '\/').rstrip()
 
     def find_word(self):
 
