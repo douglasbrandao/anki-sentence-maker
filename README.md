@@ -9,21 +9,21 @@ Anki Sentence Maker is a personal project in progress to help me a increase my v
 
 ## Getting started
 
-1. cd to the directory where requirements.txt is located and run
+1. Go to the directory where requirements.txt is located and run 
 
-`pip install -r requirements.txt`
+   `pip install -r requirements.txt`
 
 2. After install all the packages, we can run the main.py file
 
-`python3 main.py`
+   `python3 main.py`
 
 3. The program will ask you the words you would like to look it up (The delimiter that it is used is comma)
 
-> Example: run, mouse, a means to an end
+   > Example: run, mouse, a means to an end
 
 4. The script will try find these words and it is going to save into the root folder in the format below
 
-`sentences-25-04-2020.csv`
+   `sentences-25-04-2020.csv`
 
 5. And that is it. You can import in your Anki using the csv file.
 
