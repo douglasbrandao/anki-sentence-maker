@@ -138,6 +138,3 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-
-# My project
-/sentence-maker-api.py
