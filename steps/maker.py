@@ -1,6 +1,8 @@
 import requests
+from colorama import Fore, Style, init
 from bs4 import BeautifulSoup
 from .utils.reformat_word import reformat_word
+init()
 
 
 class SentenceMaker:
@@ -16,7 +18,7 @@ class SentenceMaker:
         url = requests.get('https://www.oxfordlearnersdictionaries.com/us/definition/english/' + word)
 
         if 'Word not found in the dictionary' in url.text:
-            raise ValueError(f"This word {word} was typed correctly? We can't find it on Oxford.")
+            raise ValueError(f"This word [{word}] was typed correctly?")
 
         soup = BeautifulSoup(url.text, 'html.parser')
         name = soup.find('h1', attrs={'class': 'headword'}).text
@@ -32,9 +34,10 @@ class SentenceMaker:
         examples = [s.text for s in soup.select('ul.examples > li > span.x')]
 
         if not examples:
-            raise IndexError("We haven't found a list of examples on Oxford. I'll try the next one.")
+            raise IndexError(f"We could not find a good amount of examples of [{word}]. Let me try the next one!")
 
-        print(f'We have found {word} on Oxford!')
+        print(Fore.GREEN + Style.BRIGHT + "[WE FOUND IT ON OXFORD!] -> " + Style.RESET_ALL, end='')
+        print(f'We have found [{word}] on Oxford!')
 
         return {
             'name': name,
@@ -47,11 +50,11 @@ class SentenceMaker:
         word = reformat_word(self.word)
         url = requests.get('https://dictionary.cambridge.org/dictionary/english/' + word)
 
+        if 'Search suggestions for' in url.text or 'Get clear definitions and audio' in url.text:
+            raise ValueError(f"This word [{word}] was typed correctly?")
+
         soup = BeautifulSoup(url.text, 'html.parser')
         name = soup.find('div', attrs={'class': 'di-title'}).text
-
-        if 'Search suggestions for' in url.text or 'Get clear definitions and audio' in url.text:
-            raise ValueError(f"This word {word} was typed correctly? We can't find it on Cambridge.")
 
         try:
             ipa = soup.select('span.us.dpron-i > span.pron.dpron', limit=1)[0].text
@@ -69,9 +72,10 @@ class SentenceMaker:
             examples = [s.text.strip() for s in soup.find_all('span', class_='deg')]
 
         if not examples:
-            raise IndexError("We haven't found a list of examples on Cambridge. I'll try the next one.")
+            raise IndexError(f"We could not find a good amount of examples of [{word}]. Let me try the next one!")
 
-        print(f'We have found {word} on Cambridge!')
+        print(Fore.GREEN + Style.BRIGHT + "[WE FOUND IT ON CAMBRIDGE!] -> " + Style.RESET_ALL, end='')
+        print(f'We have found [{word}] on Oxford!')
 
         return {
             'name': name,
@@ -99,14 +103,18 @@ class SentenceMaker:
             word_info = self.scrap_oxford()
             return word_info
         except IndexError as error:
+            print(Fore.YELLOW + Style.BRIGHT + "[NOT ENOUGH EXAMPLES] -> " + Style.RESET_ALL, end='')
             print(error)
         except ValueError as error:
+            print(Fore.RED + Style.BRIGHT + "[WE HAVEN'T FOUND IT ON OXFORD] -> " + Style.RESET_ALL, end='')
             print(error)
 
         try:
             word_info = self.scrap_cambridge()
             return word_info
         except IndexError as error:
+            print(Fore.YELLOW + Style.BRIGHT + "[NOT ENOUGH EXAMPLES] -> " + Style.RESET_ALL, end='')
             print(error)
         except ValueError as error:
+            print(Fore.RED + Style.BRIGHT + "[WE HAVEN'T FOUND IT ON CAMBRIDGE] -> " + Style.RESET_ALL, end='')
             print(error)

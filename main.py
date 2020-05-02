@@ -1,6 +1,8 @@
 import csv
 from datetime import date
+from colorama import Fore, Style, init
 from steps.maker import SentenceMaker
+init()
 
 if __name__ == '__main__':
 
@@ -16,8 +18,9 @@ if __name__ == '__main__':
     words_infos_returned = [x for x in words_infos_returned if x is not None]
 
     brazil_date_format = date.today().strftime('%d-%m-%y')
+    csv_name = f"sentences-{brazil_date_format}.csv"
 
-    with open(f"sentences-{brazil_date_format}.csv", 'w', encoding='utf-8', newline='') as file:
+    with open(csv_name, 'w', encoding='utf-8', newline='') as file:
         fieldnames = ['sentence', 'information']
         writer = csv.DictWriter(file, fieldnames=fieldnames)
 
@@ -29,7 +32,7 @@ if __name__ == '__main__':
                         'information': '{} {}\n'
                                        '({})'.format(info['name'], info['ipa'], ', '.join(info['definitions']))
                     })
-            print("File generated...")
+            print(Fore.WHITE + Style.BRIGHT + f"[{csv_name}] file was generated!" + Style.RESET_ALL)
         else:
             print("\n")
             print("We didn't reiceve any return with the list of words you gave to us.")
