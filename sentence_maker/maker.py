@@ -1,34 +1,33 @@
 import requests
-from colorama import Fore, Style, init
 from bs4 import BeautifulSoup
-from .utils.reformat_word import reformat_word
+from colorama import Fore, Style, init
+from .utils.word_separated_by_hiphen import word_separated_by_hiphen
 init()
 
 
 class SentenceMaker:
 
-    def __init__(self, word, max_def, minimum, maximum):
+    def __init__(self, word, max_definitions, maximum):
         self.word = word
-        self.min_examples = minimum
-        self.max_def = max_def
+        self.max_definitions = max_definitions
         self.max_examples = maximum
 
-    def scrap_oxford(self):
-        word = reformat_word(self.word)
-        url = requests.get('https://www.oxfordlearnersdictionaries.com/us/definition/english/' + word)
+    def scrape_oxford_dictionary(self):
+        word = word_separated_by_hiphen(self.word)
+        response = requests.get('https://www.oxfordlearnersdictionaries.com/us/definition/english/' + word)
 
-        if 'Word not found in the dictionary' in url.text:
+        if 'Word not found in the dictionary' in response.text:
             raise ValueError(f"This word [{word}] was typed correctly?")
 
-        soup = BeautifulSoup(url.text, 'html.parser')
+        soup = BeautifulSoup(response.text, 'html.parser')
         name = soup.find('h1', attrs={'class': 'headword'}).text
 
         try:
-            ipa = soup.find('span', attrs={'class': 'phon'}).text
+            full_phonetic_notation = soup.find('span', attrs={'class': 'phon'}).text
         except AttributeError:
             word_to_list = self.word.split()
-            phonetic = self.find_phonetic(word_to_list)
-            ipa = '/{}/'.format(phonetic)
+            phonetic = self.get_phonetic_notation_from_list(word_to_list)
+            full_phonetic_notation = '/{}/'.format(phonetic)
 
         definitions = [s.text for s in soup.find_all('span', class_='def')]
         examples = [s.text for s in soup.select('ul.examples > li > span.x')]
@@ -41,27 +40,27 @@ class SentenceMaker:
 
         return {
             'name': name,
-            'ipa': ipa,
-            'definitions': definitions[:self.max_def],
+            'ipa': full_phonetic_notation,
+            'definitions': definitions[:self.max_definitions],
             'examples': examples[0:self.max_examples]
         }
 
-    def scrap_cambridge(self):
-        word = reformat_word(self.word)
-        url = requests.get('https://dictionary.cambridge.org/dictionary/english/' + word)
+    def scrape_cambridge_dictionary(self):
+        word = word_separated_by_hiphen(self.word)
+        response = requests.get('https://dictionary.cambridge.org/dictionary/english/' + word)
 
-        if 'Search suggestions for' in url.text or 'Get clear definitions and audio' in url.text:
+        if 'Search suggestions for' in response.text or 'Get clear definitions and audio' in response.text:
             raise ValueError(f"This word [{word}] was typed correctly?")
 
-        soup = BeautifulSoup(url.text, 'html.parser')
+        soup = BeautifulSoup(response.text, 'html.parser')
         name = soup.find('div', attrs={'class': 'di-title'}).text
 
         try:
-            ipa = soup.select('span.us.dpron-i > span.pron.dpron', limit=1)[0].text
+            full_phonetic_notation = soup.select('span.us.dpron-i > span.pron.dpron', limit=1)[0].text
         except IndexError:
             word_to_list = self.word.split()
-            phonetic = self.find_phonetic(word_to_list)
-            ipa = '/{}/'.format(phonetic)
+            phonetic = self.get_phonetic_notation_from_list(word_to_list)
+            full_phonetic_notation = '/{}/'.format(phonetic)
 
         definitions = [s.text for s in soup.find_all('div', class_='def ddef_d db')]
         examples = [s.text for s in soup.find_all('div', class_='examp dexamp')]
@@ -79,29 +78,30 @@ class SentenceMaker:
 
         return {
             'name': name,
-            'ipa': ipa,
-            'definitions': definitions[:self.max_def],
+            'ipa': full_phonetic_notation,
+            'definitions': definitions[:self.max_definitions],
             'examples': examples[0:self.max_examples]
         }
 
     @staticmethod
-    def find_phonetic(*args):
+    def get_phonetic_notation_from_list(*args):
 
-        ipa, words = '', args[0]
+        full_phonetic_notation = ''
+        words = args[0]
 
         for word in words:
-            html = requests.get('https://www.oxfordlearnersdictionaries.com/us/definition/english/' + word)
-            soup = BeautifulSoup(html.text, 'html.parser')
-            phonetic = soup.find('span', attrs={'class': 'phon'}).text
-            ipa += '{} '.format(phonetic)
+            response = requests.get('https://www.oxfordlearnersdictionaries.com/us/definition/english/' + word)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            phonetic_notation = soup.find('span', attrs={'class': 'phon'}).text
+            full_phonetic_notation += '{} '.format(phonetic_notation)
 
-        return ''.join(a for a in ipa if a not in '\/').rstrip()
+        return ''.join(c for c in full_phonetic_notation if c not in '\/').rstrip()
 
-    def find_word(self):
+    def grab_information_from_dictionary(self):
 
         try:
-            word_info = self.scrap_oxford()
-            return word_info
+            word_information = self.scrape_oxford_dictionary()
+            return word_information
         except IndexError as error:
             print(Fore.YELLOW + Style.BRIGHT + "[NOT ENOUGH EXAMPLES] -> " + Style.RESET_ALL, end='')
             print(error)
@@ -110,8 +110,8 @@ class SentenceMaker:
             print(error)
 
         try:
-            word_info = self.scrap_cambridge()
-            return word_info
+            word_information = self.scrape_cambridge_dictionary()
+            return word_information
         except IndexError as error:
             print(Fore.YELLOW + Style.BRIGHT + "[NOT ENOUGH EXAMPLES] -> " + Style.RESET_ALL, end='')
             print(error)
