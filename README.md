@@ -1,6 +1,6 @@
 # Anki Sentence Maker
 
-Anki Sentence Maker is a personal project in progress to help me a increase my vocabulary in english and it stemmed from a way that i like to use to import my sentences on Anki.
+Anki Sentence Maker is a personal project in progress to help me a increase my vocabulary in english and it stemmed from a way that I like to use to import my sentences on Anki.
 
 ## Requirements
 
@@ -54,13 +54,10 @@ And that is it. You can import in your Anki using the csv file.
 
 ## Need to be implemented
 
-* Minimum of sentences
-> Example: The user could want at least 3 sentences of a word, but sometimes in one dictionary we can't find this minimum of sentences, so we have to look it up in other dictionaries to attain this minimum.
 * Put others dictionaries as Collins Dictionary, MacMillan, etc.
 
 ## To the future
 
-* Different languages to look it up
 * Create a easier interface to use
 
 ## Author

@@ -1,5 +1,5 @@
-def word_separated_by_hiphen(w):
+def word_separated_by_hiphen(w, d):
     word = w.split()
     if len(word) > 1:
-        return '-'.join(word)
+        return d.join(word)
     return word[0]

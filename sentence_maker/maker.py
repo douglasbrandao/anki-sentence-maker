@@ -1,4 +1,5 @@
 import requests
+import random
 from bs4 import BeautifulSoup
 from colorama import Fore, Style, init
 from .utils.word_separated_by_hiphen import word_separated_by_hiphen
@@ -7,13 +8,14 @@ init()
 
 class SentenceMaker:
 
-    def __init__(self, word, max_definitions, maximum):
+    def __init__(self, word, max_definitions, minimum, maximum):
         self.word = word
         self.max_definitions = max_definitions
+        self.min_examples = minimum
         self.max_examples = maximum
 
     def scrape_oxford_dictionary(self):
-        word = word_separated_by_hiphen(self.word)
+        word = word_separated_by_hiphen(self.word, '-')
         response = requests.get('https://www.oxfordlearnersdictionaries.com/us/definition/english/' + word)
 
         if 'Word not found in the dictionary' in response.text:
@@ -35,6 +37,11 @@ class SentenceMaker:
         if not examples:
             raise IndexError(f"We could not find a good amount of examples of [{word}]. Let me try the next one!")
 
+        if len(examples) < self.min_examples:
+            sentences = self.find_new_examples()
+            examples.extend(sentences)
+            random.shuffle(examples)
+
         print(Fore.GREEN + Style.BRIGHT + "[WE FOUND IT ON OXFORD!] -> " + Style.RESET_ALL, end='')
         print(f'We have found [{word}] on Oxford!')
 
@@ -42,11 +49,11 @@ class SentenceMaker:
             'name': name,
             'ipa': full_phonetic_notation,
             'definitions': definitions[:self.max_definitions],
-            'examples': examples[0:self.max_examples]
+            'examples': examples[:self.max_examples]
         }
 
     def scrape_cambridge_dictionary(self):
-        word = word_separated_by_hiphen(self.word)
+        word = word_separated_by_hiphen(self.word, '-')
         response = requests.get('https://dictionary.cambridge.org/dictionary/english/' + word)
 
         if 'Search suggestions for' in response.text or 'Get clear definitions and audio' in response.text:
@@ -73,6 +80,11 @@ class SentenceMaker:
         if not examples:
             raise IndexError(f"We could not find a good amount of examples of [{word}]. Let me try the next one!")
 
+        if len(examples) < self.min_examples:
+            sentences = self.find_new_examples()
+            examples.extend(sentences)
+            random.shuffle(examples)
+
         print(Fore.GREEN + Style.BRIGHT + "[WE FOUND IT ON CAMBRIDGE!] -> " + Style.RESET_ALL, end='')
         print(f'We have found [{word}] on Cambridge!')
 
@@ -80,8 +92,19 @@ class SentenceMaker:
             'name': name,
             'ipa': full_phonetic_notation,
             'definitions': definitions[:self.max_definitions],
-            'examples': examples[0:self.max_examples]
+            'examples': examples[:self.max_examples]
         }
+
+    def find_new_examples(self):
+        word = word_separated_by_hiphen(self.word, '_')
+        response = requests.get(f'https://www.wordhippo.com/what-is/sentences-with-the-word/{word}.html')
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+        table = soup.find('table', attrs={'id': 'mainsentencestable'})
+        tr = table.find_all('tr')
+
+        sentences = [s.text.strip('\n') for s in tr]
+        return sentences
 
     @staticmethod
     def get_phonetic_notation_from_list(*args):
