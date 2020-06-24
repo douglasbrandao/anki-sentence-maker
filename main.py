@@ -1,7 +1,8 @@
 import csv
 from datetime import date
 from colorama import Fore, Style, init
-from sentence_maker.maker import SentenceMaker
+from sentence_maker.maker import Maker
+from constants import MAX_DEFINITIONS, MAXIMUM_EXAMPLES, MINIMUM_EXAMPLES
 init()
 
 if __name__ == '__main__':
@@ -11,8 +12,9 @@ if __name__ == '__main__':
     list_of_sentences = []
 
     for word in words_typed_to_list:
-        sentence = SentenceMaker(word, 2, 3, 10).grab_information_from_dictionary()
-        list_of_sentences.append(sentence)
+        sentence = Maker(word, MAX_DEFINITIONS, MINIMUM_EXAMPLES, MAXIMUM_EXAMPLES)
+        examples = sentence.grab_examples()
+        list_of_sentences.append(examples)
 
     list_of_sentences = [x for x in list_of_sentences if x is not None]
 
@@ -36,4 +38,4 @@ if __name__ == '__main__':
             print(Fore.WHITE + Style.BRIGHT + f"[{csv_filename}] file was generated!" + Style.RESET_ALL)
         else:
             print("\n")
-            print("We didn't reiceve any return with the list of words you gave to us.")
+            print("We didn't receive any return with the list of words you gave to us.")

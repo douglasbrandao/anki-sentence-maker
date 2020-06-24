@@ -2,11 +2,12 @@ import requests
 import random
 from bs4 import BeautifulSoup
 from colorama import Fore, Style, init
-from .utils.word_separated_by_hiphen import word_separated_by_hiphen
+from .utils.word_separated_by_delimiter import word_separated_by_delimiter
+
 init()
 
 
-class SentenceMaker:
+class Maker:
 
     def __init__(self, word, max_definitions, minimum, maximum):
         self.word = word
@@ -15,7 +16,7 @@ class SentenceMaker:
         self.max_examples = maximum
 
     def scrape_oxford_dictionary(self):
-        word = word_separated_by_hiphen(self.word, '-')
+        word = word_separated_by_delimiter(self.word, '-')
         response = requests.get('https://www.oxfordlearnersdictionaries.com/us/definition/english/' + word)
 
         if 'Word not found in the dictionary' in response.text:
@@ -34,13 +35,13 @@ class SentenceMaker:
         definitions = [s.text.strip() for s in soup.find_all('span', class_='def')]
         examples = [s.text for s in soup.select('ul.examples > li > span.x')]
 
-        if not examples:
-            raise IndexError(f"We could not find a good amount of examples of [{word}]. Let me try the next one!")
-
         if len(examples) < self.min_examples:
             sentences = self.find_new_examples()
             examples.extend(sentences)
             random.shuffle(examples)
+
+        if not examples:
+            raise IndexError(f"We could not find a good amount of examples of [{word}]. Let me try the next one!")
 
         print(Fore.GREEN + Style.BRIGHT + "[WE FOUND IT ON OXFORD!] -> " + Style.RESET_ALL, end='')
         print(f'We have found [{word}] on Oxford!')
@@ -53,7 +54,7 @@ class SentenceMaker:
         }
 
     def scrape_cambridge_dictionary(self):
-        word = word_separated_by_hiphen(self.word, '-')
+        word = word_separated_by_delimiter(self.word, '-')
         response = requests.get('https://dictionary.cambridge.org/dictionary/english/' + word)
 
         if 'Search suggestions for' in response.text or 'Get clear definitions and audio' in response.text:
@@ -77,13 +78,13 @@ class SentenceMaker:
         if dataset_examples is not None:
             examples = [s.text.strip() for s in soup.find_all('span', class_='deg')]
 
-        if not examples:
-            raise IndexError(f"We could not find a good amount of examples of [{word}]. Let me try the next one!")
-
         if len(examples) < self.min_examples:
             sentences = self.find_new_examples()
             examples.extend(sentences)
             random.shuffle(examples)
+
+        if not examples:
+            raise IndexError(f"We could not find a good amount of examples of [{word}]. Let me try the next one!")
 
         print(Fore.GREEN + Style.BRIGHT + "[WE FOUND IT ON CAMBRIDGE!] -> " + Style.RESET_ALL, end='')
         print(f'We have found [{word}] on Cambridge!')
@@ -96,8 +97,11 @@ class SentenceMaker:
         }
 
     def find_new_examples(self):
-        word = word_separated_by_hiphen(self.word, '_')
+        word = word_separated_by_delimiter(self.word, '_')
         response = requests.get(f'https://www.wordhippo.com/what-is/sentences-with-the-word/{word}.html')
+
+        if 'No examples found.' in response.text:
+            raise ValueError("We haven't found examples on WordHippo!")
 
         soup = BeautifulSoup(response.text, 'html.parser')
         table = soup.find('table', attrs={'id': 'mainsentencestable'})
@@ -120,7 +124,7 @@ class SentenceMaker:
 
         return ''.join(c for c in full_phonetic_notation if c not in '\/').rstrip()
 
-    def grab_information_from_dictionary(self):
+    def grab_examples(self):
 
         try:
             word_information = self.scrape_oxford_dictionary()
