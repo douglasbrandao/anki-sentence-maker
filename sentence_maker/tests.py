@@ -1,12 +1,12 @@
 import unittest
-from .maker import SentenceMaker
+from .maker import Maker
 
 
 class MakerTests(unittest.TestCase):
 
     def test_non_found_word_should_raise_error(self):
 
-        sentence = SentenceMaker("hahaha", 2, 3, 4)
+        sentence = Maker("hahaha", 2, 3, 4)
 
         with self.assertRaises(ValueError):
             sentence.scrape_oxford_dictionary()
@@ -16,7 +16,7 @@ class MakerTests(unittest.TestCase):
 
     def test_find_examples_wordhippo(self):
 
-        sentence = SentenceMaker("caralho", 2, 3, 4)
+        sentence = Maker("caralho", 2, 3, 4)
 
         with self.assertRaises(ValueError):
             sentence.find_new_examples()

@@ -1,4 +1,5 @@
 import csv
+import sys
 from datetime import date
 from colorama import Fore, Style, init
 from sentence_maker.maker import Maker
@@ -7,11 +8,11 @@ init()
 
 if __name__ == '__main__':
 
-    words_typed_from_user = input('Which words do you want to look up on the dictionaries?\n')
-    words_typed_to_list = words_typed_from_user.strip().split(',')
+    ''' First parameter from args is the name of the script'''
+    words_from_args = sys.argv[1:]
     list_of_sentences = []
 
-    for word in words_typed_to_list:
+    for word in words_from_args:
         sentence = Maker(word, MAX_DEFINITIONS, MINIMUM_EXAMPLES, MAXIMUM_EXAMPLES)
         examples = sentence.grab_examples()
         list_of_sentences.append(examples)

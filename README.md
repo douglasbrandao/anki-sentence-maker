@@ -15,15 +15,18 @@ Go to the directory where requirements.txt is located and run
 pip install -r requirements.txt
 ```
 
-After install all the packages, we can run the main.py file
+After install all the packages, we can run the main.py file passing the arguments
 
 ```
-python3 main.py
+python3 main.py desecrate meaning
 ```
 
-The program will ask you the words you would like to look it up (The delimiter that it is used is comma)
+In case of look up expressions separated by spaces, wrap it up with quotation marks
+> Example: an means to an end
 
-> Example: run, mouse, a means to an end
+```
+python3 main.py desecrate "an means to and end" meaning
+```
 
 The script will try find these words and it is going to save into the root folder in the format below
 
