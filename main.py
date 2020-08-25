@@ -39,4 +39,4 @@ if __name__ == '__main__':
             print(Fore.WHITE + Style.BRIGHT + f"[{csv_filename}] file was generated!" + Style.RESET_ALL)
         else:
             print("\n")
-            print("We didn't receive any return with the list of words you gave to us.")
+            print("We didn't receive any return with the list of words you have provided")
