@@ -1,4 +1,5 @@
 from requests import get
+from .headers import headers
 import random
 from bs4 import BeautifulSoup
 from colorama import Fore, Style, init
@@ -17,7 +18,7 @@ class Maker:
 
     def scrape_oxford_dictionary(self):
         word = word_separated_by_delimiter(self.word, '-')
-        response = get(f'https://www.oxfordlearnersdictionaries.com/us/definition/english/{word}')
+        response = get(f'https://www.oxfordlearnersdictionaries.com/us/definition/english/{word}', headers=headers)
 
         if 'Word not found in the dictionary' in response.text:
             raise ValueError(f"Was this word [{word}] typed correctly?")
@@ -55,15 +56,6 @@ class Maker:
 
     def scrape_cambridge_dictionary(self):
         word = word_separated_by_delimiter(self.word, '-')
-
-        headers = {
-            "User-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                          "AppleWebKit/537.36 (KHTML, like Gecko) "
-                          "Chrome/84.0.4147.89 Safari/537.36 Edg/84.0.522.44",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,"
-                      "*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-            "Accept-language": "en-US,en;q=0.9,pt;q=0.8"
-        }
 
         response = get(f'https://dictionary.cambridge.org/dictionary/english/{word}', headers=headers)
 
@@ -108,7 +100,7 @@ class Maker:
 
     def find_new_examples(self):
         word = word_separated_by_delimiter(self.word, '_')
-        response = get(f'https://www.wordhippo.com/what-is/sentences-with-the-word/{word}.html')
+        response = get(f'https://www.wordhippo.com/what-is/sentences-with-the-word/{word}.html', headers=headers)
 
         if 'No examples found.' in response.text:
             raise ValueError("We haven't found examples on WordHippo!")
@@ -127,7 +119,7 @@ class Maker:
         words = args[0]
 
         for word in words:
-            response = get(f'https://www.oxfordlearnersdictionaries.com/us/definition/english/{word}')
+            response = get(f'https://www.oxfordlearnersdictionaries.com/us/definition/english/{word}', headers=headers)
             soup = BeautifulSoup(response.text, 'html.parser')
             phonetic_notation = soup.find('span', attrs={'class': 'phon'}).text
             full_phonetic_notation += '{} '.format(phonetic_notation)

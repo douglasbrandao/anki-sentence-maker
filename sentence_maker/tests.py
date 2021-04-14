@@ -16,7 +16,7 @@ class MakerTests(unittest.TestCase):
 
     def test_find_examples_wordhippo(self):
 
-        sentence = Maker("caralho", 2, 3, 4)
+        sentence = Maker("testesteteste", 2, 3, 4)
 
         with self.assertRaises(ValueError):
             sentence.find_new_examples()
