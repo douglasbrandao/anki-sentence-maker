@@ -14,7 +14,7 @@ class Base:
         self._max_definitions = max_definitions
 
     def scrape(self):
-        """This method should be overridden"""
+        """This method must be overridden"""
         pass
 
     @staticmethod
