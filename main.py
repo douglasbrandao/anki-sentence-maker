@@ -26,8 +26,7 @@ if __name__ == '__main__':
     for word in words_from_args:
         external_data['word'] = word
         sentence = Maker(**external_data)
-        examples = sentence.grab_examples()
-        list_of_sentences.append(examples)
+        list_of_sentences.append(sentence.get())
 
     list_of_sentences: List[dict] = [s for s in list_of_sentences if s]
 

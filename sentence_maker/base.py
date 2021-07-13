@@ -24,8 +24,13 @@ class Base:
         for word in words:
             response = get(os.environ.get('OXFORD_URL') + word, headers=headers)
             soup = BeautifulSoup(response.text, 'html.parser')
-            phonetic_notation = soup.find('span', attrs={'class': 'phon'}).text
-            full_phonetic_notation += '{} '.format(phonetic_notation)
+
+            try:
+                phonetic_notation = soup.find('span', attrs={'class': 'phon'}).text
+                full_phonetic_notation += '{} '.format(phonetic_notation)
+            except AttributeError as error:
+                return error
+
         return ''.join(c for c in full_phonetic_notation if c not in '\/').rstrip()
 
     def find_new_examples(self):
@@ -33,7 +38,7 @@ class Base:
         response = get(os.environ.get('EXAMPLES_URL') + word + '.html', headers=headers)
 
         if 'No examples found.' in response.text:
-            raise ValueError("We haven't found examples on WordHippo!")
+            raise ValueError("We didn't find examples on WordHippo!")
 
         soup = BeautifulSoup(response.text, 'html.parser')
         table = soup.find('table', attrs={'id': 'mainsentencestable'})
