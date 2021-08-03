@@ -33,7 +33,7 @@ if __name__ == '__main__':
     brazil_date_notation: str = date.today().strftime('%d-%m-%y')
     csv_filename: str = f"sentences-{brazil_date_notation}.csv"
 
-    with open(csv_filename, 'w', encoding='utf-8', newline='') as file:
+    with open(csv_filename, 'w', encoding='utf-8-sig', newline='') as file:
         fieldnames: List[str] = ['sentence', 'information']
         writer: DictWriter = DictWriter(file, fieldnames=fieldnames)
 

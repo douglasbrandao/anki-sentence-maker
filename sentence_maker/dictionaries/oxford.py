@@ -12,6 +12,7 @@ from requests import get, Response
 class Oxford(Base):
 
     def scrape(self):
+        """Scrape the oxford dictionary"""
         word: str = word_separated_by_delimiter(self._word, '-')
         response: Response = get(os.environ.get('OXFORD_URL') + word, headers=headers)
 

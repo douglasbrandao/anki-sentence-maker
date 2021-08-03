@@ -1,11 +1,12 @@
 import os
 from .utils.word_separated_by_delimiter import word_separated_by_delimiter
+from abc import ABC, abstractmethod
 from bs4 import BeautifulSoup
 from sentence_maker.headers import headers
 from requests import get
 
 
-class Base:
+class Base(ABC):
 
     def __init__(self, word, min_examples, max_examples, max_definitions):
         self._word = word
@@ -13,12 +14,13 @@ class Base:
         self._max_examples = max_examples
         self._max_definitions = max_definitions
 
+    @abstractmethod
     def scrape(self):
         """This method must be overridden"""
         pass
 
-    @staticmethod
     def get_phonetic_notation_from_list(*args):
+        """Find a phonetic notation IPA on oxford dictionary"""
         full_phonetic_notation = ''
         words = args[0]
         for word in words:
@@ -34,6 +36,7 @@ class Base:
         return ''.join(c for c in full_phonetic_notation if c not in '\/').rstrip()
 
     def find_new_examples(self):
+        """Go to wordhippo website in order to find new examples to meet the minimum requirements"""
         word = word_separated_by_delimiter(self._word, '_')
         response = get(os.environ.get('EXAMPLES_URL') + word + '.html', headers=headers)
 

@@ -12,6 +12,7 @@ from requests import get, Response
 class Cambridge(Base):
 
     def scrape(self):
+        """Scrape the cambridge dictionary"""
         word: str = word_separated_by_delimiter(self._word, '-')
         response: Response = get(os.environ.get('CAMBRIDGE_URL') + word, headers=headers)
 

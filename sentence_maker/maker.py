@@ -13,6 +13,7 @@ class Maker(BaseModel):
     max_examples: int
 
     def get(self):
+        """Try to find the words provided"""
         try:
             oxford = Oxford(self.word, self.min_examples, self.max_examples, self.max_definitions)
             response = oxford.scrape()
