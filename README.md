@@ -1,6 +1,6 @@
 # Anki Sentence Maker
 
-Anki Sentence Maker is a personal project in progress to help me a increase my vocabulary in english and it stemmed from a way that I like to use to import my sentences on Anki.
+Anki Sentence Maker is a personal project that has helped me increase my vocabulary in english, and it stemmed from a matter of preference in how I import my sentences on Anki.
 
 ## Requirements
 
@@ -15,17 +15,17 @@ Go to the directory where requirements.txt is located and run
 pip install -r requirements.txt
 ```
 
-After install all the packages, we can run the main.py file passing the arguments
+After install all the packages, you can run the main.py file passing the arguments
 
 ```
 python3 main.py desecrate meaning
 ```
 
-In case of look up expressions separated by spaces, wrap it up with quotation marks
-> Example: an means to an end
+In case of look expressions up separated by spaces, wrap it up with quotation marks
+> Example: a means to an end
 
 ```
-python3 main.py desecrate "an means to and end" meaning
+python3 main.py desecrate "a means to and end" meaning
 ```
 
 The script will try find these words and it is going to save into the root folder in the format below
@@ -42,9 +42,9 @@ And that is it. You can import in your Anki using the csv file.
 * The script will look it up in a variety of dictionaries
 * The script will create a .csv file with rows in the format below
 
-## Row format
+## Card format
 
-|Sentence|Information|
+|Sentence (Front card) |Information (Back card)|
 |:-------------:|:-------------:|
 |He played with the band at a recent gig.| gig /ɡɪɡ/ (a performance by musicians playing popular music or jazz in front of an audience; a similar performance by a comedian)|
 
@@ -57,11 +57,11 @@ And that is it. You can import in your Anki using the csv file.
 
 ## Need to be implemented
 
-* Put others dictionaries as Collins Dictionary, MacMillan, etc.
+* Collins Dictionary, MacMillan, etc.
 
 ## To the future
 
-* Create a easier interface to use
+* Develop an easier interface to use
 
 ## Author
 
