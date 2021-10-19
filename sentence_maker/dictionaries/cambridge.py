@@ -1,9 +1,8 @@
-import os
 import random
 from typing import List
-from sentence_maker.utils import word_separated_by_delimiter
+from utils import word_separated_by_delimiter, str_env
 from colorama import Fore, Style
-from sentence_maker import Base
+from sentence_maker.dictionaries.base import Base, NoExamplesFound
 from sentence_maker.headers import headers
 from bs4 import BeautifulSoup
 from requests import get, Response
@@ -14,7 +13,7 @@ class Cambridge(Base):
     def scrape(self):
         """Scrape the cambridge dictionary"""
         word: str = word_separated_by_delimiter(self._word, '-')
-        response: Response = get(os.environ.get('CAMBRIDGE_URL') + word, headers=headers)
+        response: Response = get(str_env('CAMBRIDGE_URL') + word, headers=headers)
 
         if 'Search suggestions for' in response.text or 'Get clear definitions and audio' in response.text:
             raise ValueError(f"Was this word [{word}] typed correctly?")
@@ -43,7 +42,7 @@ class Cambridge(Base):
             random.shuffle(examples)
 
         if not examples:
-            raise IndexError(f"We could not find a good number of examples of [{word}]. Let me try the next one!")
+            raise NoExamplesFound(f"It wasn't possible to find a good amount of examples of [{word}].")
 
         print(Fore.GREEN + Style.BRIGHT + "[WE FOUND IT ON CAMBRIDGE!] -> " + Style.RESET_ALL, end='')
         print(f'We have found [{word}] on Cambridge!')

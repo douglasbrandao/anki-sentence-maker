@@ -28,7 +28,7 @@ In case of look expressions up separated by spaces, wrap it up with quotation ma
 python3 main.py desecrate "a means to and end" meaning
 ```
 
-The script will try find these words and it is going to save into the root folder in the format below
+The script will try to find these words, and it is going to save into the root folder in the format below
 
 ```
 sentences-25-04-2020.csv

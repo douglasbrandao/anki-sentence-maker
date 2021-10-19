@@ -1,21 +1,22 @@
+from utils import int_env
 from sentence_maker.dictionaries import Oxford, Cambridge
 from colorama import Fore, Style, init
-from pydantic import BaseModel
 
 init()
 
 
-class Maker(BaseModel):
+class Maker:
 
-    word: str
-    max_definitions: int
-    min_examples: int
-    max_examples: int
+    def __init__(self, word):
+        self.__word: str = word
+        self.__max_definitions: int = int_env('MAX_DEFINITIONS')
+        self.__min_examples: int = int_env('MINIMUM_EXAMPLES')
+        self.__max_examples: int = int_env('MAXIMUM_EXAMPLES')
 
     def get(self):
         """Try to find the words provided"""
         try:
-            oxford = Oxford(self.word, self.min_examples, self.max_examples, self.max_definitions)
+            oxford = Oxford(self.__word, self.__min_examples, self.__max_examples, self.__max_definitions)
             response = oxford.scrape()
             return response
         except IndexError as error:
@@ -26,7 +27,7 @@ class Maker(BaseModel):
             print(error)
 
         try:
-            oxford = Cambridge(self.word, self.min_examples, self.max_examples, self.max_definitions)
+            oxford = Cambridge(self.__word, self.__min_examples, self.__max_examples, self.__max_definitions)
             response = oxford.scrape()
             return response
         except IndexError as error:

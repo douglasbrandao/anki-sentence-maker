@@ -1,9 +1,8 @@
-import os
 import random
 from typing import List
-from sentence_maker.utils import word_separated_by_delimiter
+from utils import word_separated_by_delimiter, str_env
 from colorama import Fore, Style
-from sentence_maker import Base
+from sentence_maker.dictionaries.base import Base
 from sentence_maker.headers import headers
 from bs4 import BeautifulSoup
 from requests import get, Response
@@ -14,7 +13,7 @@ class Oxford(Base):
     def scrape(self):
         """Scrape the oxford dictionary"""
         word: str = word_separated_by_delimiter(self._word, '-')
-        response: Response = get(os.environ.get('OXFORD_URL') + word, headers=headers)
+        response: Response = get(str_env('OXFORD_URL') + word, headers=headers)
 
         if 'Word not found in the dictionary' in response.text:
             raise ValueError(f"Was this word [{word}] typed correctly?")
