@@ -3,8 +3,6 @@ from csv import DictWriter
 from datetime import date
 from typing import Dict, List, Union
 
-from colorama import Fore, Style
-
 from anki_sentence_maker.maker import Maker
 
 
@@ -27,12 +25,7 @@ def generate_csv(
                         "information": "{} {}\n({})".format(name, ipa, definitions),
                     }
                 )
-        print(
-            Fore.WHITE
-            + Style.BRIGHT
-            + f"[{filename}] file was generated!"
-            + Style.RESET_ALL
-        )
+        print(f"[{filename}] file was generated!")
 
 
 def grab_sentences_from_args(

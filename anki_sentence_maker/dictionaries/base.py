@@ -4,6 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from anki_sentence_maker.headers import headers
+from exceptions import NoExamplesFound
 from utils import str_env
 from utils.word_separated_by_delimiter import word_separated_by_delimiter
 
@@ -52,8 +53,3 @@ class Base(ABC):
         tr = table.find_all("tr")
         sentences = [s.text.strip("\n") for s in tr]
         return sentences
-
-
-class NoExamplesFound(Exception):
-    def __init__(self, message="No examples were found on WordHippo"):
-        super().__init__(message)

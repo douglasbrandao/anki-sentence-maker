@@ -2,11 +2,11 @@ import random
 from typing import List
 
 from bs4 import BeautifulSoup
-from colorama import Fore, Style
 from requests import Response, get
 
-from anki_sentence_maker.dictionaries.base import Base, NoExamplesFound
+from anki_sentence_maker.dictionaries.base import Base
 from anki_sentence_maker.headers import headers
+from exceptions import NoExamplesFound
 from utils import str_env, word_separated_by_delimiter
 
 
@@ -59,13 +59,7 @@ class Cambridge(Base):
                 f"It wasn't possible to find a good amount of examples of [{word}]."
             )
 
-        print(
-            Fore.GREEN
-            + Style.BRIGHT
-            + "[WE FOUND IT ON CAMBRIDGE!] -> "
-            + Style.RESET_ALL,
-            end="",
-        )
+        print("[WE FOUND IT ON CAMBRIDGE!] -> ", end="")
         print(f"We have found [{word}] on Cambridge!")
 
         return {

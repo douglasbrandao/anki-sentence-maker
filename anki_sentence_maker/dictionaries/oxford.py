@@ -2,11 +2,11 @@ import random
 from typing import List
 
 from bs4 import BeautifulSoup
-from colorama import Fore, Style
 from requests import Response, get
 
 from anki_sentence_maker.dictionaries.base import Base
 from anki_sentence_maker.headers import headers
+from exceptions import NoExamplesFound
 from utils import str_env, word_separated_by_delimiter
 
 
@@ -42,17 +42,11 @@ class Oxford(Base):
             random.shuffle(examples)
 
         if not examples:
-            raise IndexError(
+            raise NoExamplesFound(
                 f"We could not find a good number of examples of [{word}]. Let me try the next one!"
             )
 
-        print(
-            Fore.GREEN
-            + Style.BRIGHT
-            + "[WE FOUND IT ON OXFORD!] -> "
-            + Style.RESET_ALL,
-            end="",
-        )
+        print("[WE FOUND IT ON OXFORD!] -> ", end="")
         print(f"We have found [{word}] on Oxford!")
 
         return {

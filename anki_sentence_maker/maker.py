@@ -1,9 +1,5 @@
-from colorama import Fore, Style, init
-
 from anki_sentence_maker.dictionaries import Cambridge, Oxford
 from utils import int_env
-
-init()
 
 
 class Maker:
@@ -25,22 +21,10 @@ class Maker:
             response = oxford.scrape()
             return response
         except IndexError as error:
-            print(
-                Fore.YELLOW
-                + Style.BRIGHT
-                + "[NOT ENOUGH EXAMPLES] -> "
-                + Style.RESET_ALL,
-                end="",
-            )
+            print("[NOT ENOUGH EXAMPLES] -> ", end="")
             print(error)
         except (ValueError, AttributeError) as error:
-            print(
-                Fore.RED
-                + Style.BRIGHT
-                + "[WE DIDN'T FIND IT ON OXFORD] -> "
-                + Style.RESET_ALL,
-                end="",
-            )
+            print("[WE DIDN'T FIND IT ON OXFORD] -> ", end="")
             print(error)
 
         try:
@@ -53,20 +37,6 @@ class Maker:
             response = oxford.scrape()
             return response
         except IndexError as error:
-            print(
-                Fore.YELLOW
-                + Style.BRIGHT
-                + "[NOT ENOUGH EXAMPLES] -> "
-                + Style.RESET_ALL,
-                end="",
-            )
-            print(error)
+            print("[NOT ENOUGH EXAMPLES] -> ", end="")
         except (ValueError, AttributeError) as error:
-            print(
-                Fore.RED
-                + Style.BRIGHT
-                + "[WE DIDN'T FIND IT ON CAMBRIDGE] -> "
-                + Style.RESET_ALL,
-                end="",
-            )
-            print(error)
+            print("[WE DIDN'T FIND IT ON CAMBRIDGE] -> ", end="")
