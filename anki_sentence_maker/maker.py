@@ -1,6 +1,7 @@
-from utils import int_env
-from anki_sentence_maker.dictionaries import Oxford, Cambridge
 from colorama import Fore, Style, init
+
+from anki_sentence_maker.dictionaries import Cambridge, Oxford
+from utils import int_env
 
 init()
 

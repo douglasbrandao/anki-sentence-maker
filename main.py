@@ -1,8 +1,10 @@
 import sys
 from csv import DictWriter
 from datetime import date
+from typing import Dict, List, Union
+
 from colorama import Fore, Style
-from typing import List, Dict, Union
+
 from anki_sentence_maker.maker import Maker
 
 
