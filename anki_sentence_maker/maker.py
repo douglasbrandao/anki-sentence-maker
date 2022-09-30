@@ -1,5 +1,5 @@
 from utils import int_env
-from sentence_maker.dictionaries import Oxford, Cambridge
+from anki_sentence_maker.dictionaries import Oxford, Cambridge
 from colorama import Fore, Style, init
 
 init()

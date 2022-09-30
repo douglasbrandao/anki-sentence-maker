@@ -3,7 +3,7 @@ from csv import DictWriter
 from datetime import date
 from colorama import Fore, Style
 from typing import List, Dict, Union
-from sentence_maker.maker import Maker
+from anki_sentence_maker.maker import Maker
 
 
 def generate_csv(filename: str, sentences_list: List[Dict[str, Union[str, List[str]]]]) -> None:

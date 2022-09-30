@@ -2,7 +2,7 @@ import requests
 from utils.word_separated_by_delimiter import word_separated_by_delimiter
 from abc import ABC, abstractmethod
 from bs4 import BeautifulSoup
-from sentence_maker.headers import headers
+from anki_sentence_maker.headers import headers
 from utils import str_env
 
 

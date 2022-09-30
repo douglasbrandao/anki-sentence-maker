@@ -2,8 +2,8 @@ import random
 from typing import List
 from utils import word_separated_by_delimiter, str_env
 from colorama import Fore, Style
-from sentence_maker.dictionaries.base import Base, NoExamplesFound
-from sentence_maker.headers import headers
+from anki_sentence_maker.dictionaries.base import Base, NoExamplesFound
+from anki_sentence_maker.headers import headers
 from bs4 import BeautifulSoup
 from requests import get, Response
 
