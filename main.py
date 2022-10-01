@@ -27,15 +27,15 @@ def generate_csv(
                 )
 
 
-def grab_sentences_from_args(
+def get_sentences_from_args(
     words: list[str],
 ) -> list[dict[str, str | list[str]]]:
-    """Grab sentences with the words provided"""
+    """Get sentences with the words provided"""
     sentences_list = []
 
     for word in words:
-        sentence = Maker(word=word)
-        sentences_list.append(sentence.get())
+        maker = Maker(word=word)
+        sentences_list.append(maker.sentence)
     sentences_list = [s for s in sentences_list if s]
 
     return sentences_list
@@ -43,14 +43,14 @@ def grab_sentences_from_args(
 
 def main() -> None:
     words_from_args: list[str] = sys.argv[1:]
-    sentences_list = grab_sentences_from_args(words_from_args)
+    sentences = get_sentences_from_args(words=words_from_args)
 
-    if not sentences_list:
+    if not sentences:
         logger.warning("We haven't got any sentences")
     else:
         brazil_date_notation: str = date.today().strftime("%d-%m-%y")
         filename: str = f"sentences-{brazil_date_notation}.csv"
-        generate_csv(filename, sentences_list)
+        generate_csv(filename, sentences)
         logger.info(f"{filename} file has been generated")
 
 
