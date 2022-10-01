@@ -15,14 +15,11 @@ def generate_csv(
         writer: DictWriter = DictWriter(file, fieldnames=fieldnames)
 
         for sentence in sentences_list:
-            for example in sentence["examples"]:
-                name: str = sentence["name"]
-                ipa: str = sentence["ipa"]
-                definitions: str = ", ".join(sentence["definitions"])
+            for example in sentence.examples:
                 writer.writerow(
                     {
                         "sentence": example,
-                        "information": f"{name} {ipa}\n({definitions})",
+                        "information": f"{sentence.name} {sentence.phonetic_notation}\n({sentence.definitions})",
                     }
                 )
 
@@ -42,8 +39,8 @@ def get_sentences_from_args(
 
 
 def main() -> None:
-    words_from_args: list[str] = sys.argv[1:]
-    sentences = get_sentences_from_args(words=words_from_args)
+    words: list[str] = sys.argv[1:]
+    sentences = get_sentences_from_args(words=words)
 
     if not sentences:
         logger.warning("We haven't got any sentences")
