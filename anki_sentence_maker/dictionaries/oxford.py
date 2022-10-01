@@ -29,7 +29,7 @@ class Oxford(Base):
         examples_li: ResultSet[Tag] = soup.select("ul.examples > li > span.x")
 
         name: str = title_h1.text if title_h1 else ""
-        phonetic_notation = ""
+        phonetic_notation: str = phon_span.text if phon_span else ""
 
         if not phon_span:
             word_to_list: list[str] = self._word.split()
