@@ -1,5 +1,4 @@
 import random
-from typing import List
 
 import requests
 from bs4 import BeautifulSoup
@@ -38,23 +37,23 @@ class Cambridge(Base):
             phonetic = self.get_phonetic_notation_from_list(word_to_list)
             full_phonetic_notation = f"/{phonetic}/"
 
-        definitions: List[str] = [
+        definitions: list[str] = [
             s.text.strip().replace(":", "")
             for s in soup.find_all("div", class_="def ddef_d db")
         ]
-        examples: List[str] = [
+        examples: list[str] = [
             s.text for s in soup.find_all("div", class_="examp dexamp")
         ]
 
         dataset_examples = soup.find("div", attrs={"id": "dataset-example"})
 
         if dataset_examples:
-            examples: List[str] = [
+            examples: list[str] = [
                 s.text.strip() for s in soup.find_all("span", class_="deg")
             ]
 
         if len(examples) < self._min_examples:
-            sentences: List[str] = self.find_new_examples()
+            sentences: list[str] = self.find_new_examples()
             examples.extend(sentences)
             random.shuffle(examples)
 

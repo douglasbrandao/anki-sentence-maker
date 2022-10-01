@@ -1,5 +1,4 @@
 import random
-from typing import List
 
 import requests
 from bs4 import BeautifulSoup
@@ -37,17 +36,17 @@ class Oxford(Base):
                 "Phonetic notation hasn't been found"
             )
 
-        word_to_list: List[str] = self._word.split()
+        word_to_list: list[str] = self._word.split()
         phonetic: str = self.get_phonetic_notation_from_list(word_to_list)
         full_phonetic_notation: str = f"/{phonetic}/"
 
-        definitions: List[str] = [
+        definitions: list[str] = [
             s.text.strip() for s in soup.find_all("span", class_="def")
         ]
-        examples: List[str] = [s.text for s in soup.select("ul.examples > li > span.x")]
+        examples: list[str] = [s.text for s in soup.select("ul.examples > li > span.x")]
 
         if len(examples) < self._min_examples:
-            sentences: List[str] = self.find_new_examples()
+            sentences: list[str] = self.find_new_examples()
             examples.extend(sentences)
             random.shuffle(examples)
 
