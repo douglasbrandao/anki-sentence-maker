@@ -1,13 +1,11 @@
-import random
-
 import requests
 from bs4 import BeautifulSoup
 from requests import Response
 
 from anki_sentence_maker.dictionaries.base import Base
 from anki_sentence_maker.headers import headers
-from exceptions import IncorrectlyTypedException, NoExamplesFoundException
-from logger import logger
+from exceptions import IncorrectlyTypedException
+from type.data import Data
 from utils import str_env, word_separated_by_delimiter
 
 
@@ -52,21 +50,9 @@ class Cambridge(Base):
                 s.text.strip() for s in soup.find_all("span", class_="deg")
             ]
 
-        if len(examples) < self._min_examples:
-            sentences: list[str] = self.find_new_examples()
-            examples.extend(sentences)
-            random.shuffle(examples)
-
-        if not examples:
-            raise NoExamplesFoundException(
-                f"We couldn't find a good amount of examples of [{word}]."
-            )
-
-        logger.info(f"We have found [{word}] on Cambridge")
-
-        return {
-            "name": name,
-            "ipa": full_phonetic_notation,
-            "definitions": definitions[: self._max_definitions],
-            "examples": examples[: self._max_examples],
-        }
+        return Data(
+            name=name,
+            phonetic_notation=full_phonetic_notation,
+            definitions=definitions,
+            examples=examples,
+        )

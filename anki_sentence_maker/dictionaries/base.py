@@ -4,17 +4,13 @@ import requests
 from bs4 import BeautifulSoup
 
 from anki_sentence_maker.headers import headers
-from exceptions import NoExamplesFoundException, PhoneticNotationNotFoundException
-from utils import int_env, str_env
-from utils.word_separated_by_delimiter import word_separated_by_delimiter
+from exceptions import PhoneticNotationNotFoundException
+from utils import str_env
 
 
 class Base(ABC):
     def __init__(self, word):
         self._word = word
-        self._min_examples = int_env("MINIMUM_EXAMPLES")
-        self._max_examples = int_env("MAXIMUM_EXAMPLES")
-        self._max_definitions = int_env("MAX_DEFINITIONS")
 
     @abstractmethod
     def scrape(self):
@@ -37,21 +33,3 @@ class Base(ABC):
                 raise PhoneticNotationNotFoundException(
                     "Phonetic Notation hasn't been found"
                 )
-
-    def find_new_examples(self):
-        """
-        Go to WordHippo website in order to find new examples to meet the minimum requirements
-        """
-        word: str = word_separated_by_delimiter(self._word, "_")
-        response = requests.get(
-            f"{str_env('EXAMPLES_URL')}{word}.html", headers=headers
-        )
-
-        if "No examples found." in response.text:
-            raise NoExamplesFoundException("No examples were found on WordHippo")
-
-        soup = BeautifulSoup(response.text, "html.parser")
-        table = soup.find("table", attrs={"id": "mainsentencestable"})
-        tr = table.find_all("tr")
-        sentences = [s.text.strip("\n") for s in tr]
-        return sentences
