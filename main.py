@@ -4,11 +4,10 @@ from datetime import date
 
 from anki_sentence_maker.maker import Maker
 from logger import logger
+from type.data import Data
 
 
-def generate_csv(
-    filename: str, sentences_list: list[dict[str, str | list[str]]]
-) -> None:
+def generate_csv(filename: str, sentences_list: list[Data]) -> None:
     """Generate a csv file with list of sentences"""
     with open(filename, "w", encoding="utf-8-sig", newline="") as file:
         fieldnames: list[str] = ["sentence", "information"]
@@ -26,7 +25,7 @@ def generate_csv(
 
 def get_sentences_from_args(
     words: list[str],
-) -> list[dict[str, str | list[str]]]:
+) -> list[Data]:
     """Get sentences with the words provided"""
     sentences_list = []
 

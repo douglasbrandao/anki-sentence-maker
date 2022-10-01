@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from bs4.element import PageElement, ResultSet, Tag
 
 from anki_sentence_maker.dictionaries.base import Base
 from anki_sentence_maker.headers import headers
@@ -8,7 +9,7 @@ from utils import str_env, word_separated_by_delimiter
 
 
 class WordHippo(Base):
-    def scrape(self):
+    def scrape(self) -> list[str]:
         """
         Go to WordHippo website in order to find new examples to meet the minimum requirements
         """
@@ -21,7 +22,7 @@ class WordHippo(Base):
             raise NoExamplesFoundException("No examples were found")
 
         soup = BeautifulSoup(response.text, "html.parser")
-        table = soup.find("table", attrs={"id": "mainsentencestable"})
-        tr = table.find_all("tr")
-        sentences = [s.text.strip("\n") for s in tr]
+        main_sentences_rows: ResultSet[Tag] = soup.select("table#mainsentencestable tr")
+
+        sentences = [s.text.strip("\n") for s in main_sentences_rows]
         return sentences

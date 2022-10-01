@@ -1,5 +1,8 @@
+from xml.dom.minidom import Attr
+
 import requests
 from bs4 import BeautifulSoup
+from bs4.element import PageElement, ResultSet, Tag
 from requests import Response
 
 from anki_sentence_maker.dictionaries.base import Base
@@ -24,35 +27,39 @@ class Cambridge(Base):
             raise IncorrectlyTypedException(f"Was this word [{word}] typed correctly?")
 
         soup = BeautifulSoup(response.text, "html.parser")
-        name: str = soup.find("div", attrs={"class": "di-title"}).text
+
+        title_div: PageElement | None = soup.find("div", attrs={"class": "di-title"})
+        phon_span: ResultSet[Tag] = soup.select(
+            "span.us.dpron-i > span.pron.dpron", limit=1
+        )
+        definition_div: ResultSet[PageElement] = soup.find_all(
+            "div", class_="def ddef_d db"
+        )
+        examples_div = soup.find_all("div", class_="examp dexamp")
+        dataset_div = soup.find("div", attrs={"id": "dataset-example"})
+
+        name: str = title_div.text if title_div else ""
 
         try:
-            full_phonetic_notation = soup.select(
-                "span.us.dpron-i > span.pron.dpron", limit=1
-            )[0].text
+            phonetic_notation = phon_span[0].text
         except IndexError:
             word_to_list = self._word.split()
             phonetic = self.get_phonetic_notation_from_list(word_to_list)
-            full_phonetic_notation = f"/{phonetic}/"
+            phonetic_notation = f"/{phonetic}/"
 
         definitions: list[str] = [
-            s.text.strip().replace(":", "")
-            for s in soup.find_all("div", class_="def ddef_d db")
+            s.text.strip().replace(":", "") for s in definition_div
         ]
-        examples: list[str] = [
-            s.text for s in soup.find_all("div", class_="examp dexamp")
-        ]
+        examples: list[str] = [s.text for s in examples_div]
 
-        dataset_examples = soup.find("div", attrs={"id": "dataset-example"})
-
-        if dataset_examples:
+        if dataset_div:
             examples: list[str] = [
                 s.text.strip() for s in soup.find_all("span", class_="deg")
             ]
 
         return Data(
             name=name,
-            phonetic_notation=full_phonetic_notation,
+            phonetic_notation=phonetic_notation,
             definitions=definitions,
             examples=examples,
         )

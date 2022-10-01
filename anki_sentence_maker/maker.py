@@ -12,13 +12,13 @@ from utils import int_env
 
 
 class Maker:
-    def __init__(self, word):
-        self.__word: str = word
+    def __init__(self, word: str):
+        self.__word = word
         self._min_examples = int_env("MINIMUM_EXAMPLES")
         self._max_examples = int_env("MAXIMUM_EXAMPLES")
         self._max_definitions = int_env("MAX_DEFINITIONS")
 
-    def check_if_examples_match_minimum_amount(self, data):
+    def check_if_examples_match_minimum_amount(self, data: Data) -> Data:
 
         if len(data.examples) < self._min_examples:
             word_hippo = WordHippo(word=data.name)
@@ -41,25 +41,18 @@ class Maker:
         )
 
     @property
-    def sentence(self):
+    def sentence(self) -> Data | None:
         """Try to find the words provided"""
 
-        try:
-            oxford = Oxford(self.__word)
-            return self.check_if_examples_match_minimum_amount(oxford.scrape())
-        except NoExamplesFoundException as error:
-            logger.error(error)
-        except PhoneticNotationNotFoundException as error:
-            logger.error(error)
-        except IncorrectlyTypedException as error:
-            logger.error(error)
+        dictionaries = [Oxford, Cambridge]
 
-        try:
-            cambridge = Cambridge(self.__word)
-            return self.check_if_examples_match_minimum_amount(cambridge.scrape())
-        except NoExamplesFoundException as error:
-            logger.error(error)
-        except PhoneticNotationNotFoundException as error:
-            logger.error(error)
-        except IncorrectlyTypedException as error:
-            logger.error(error)
+        for dictionary in dictionaries:
+            try:
+                instance = dictionary(self.__word)
+                return self.check_if_examples_match_minimum_amount(instance.scrape())
+            except NoExamplesFoundException as error:
+                logger.error(error)
+            except PhoneticNotationNotFoundException as error:
+                logger.error(error)
+            except IncorrectlyTypedException as error:
+                logger.error(error)
