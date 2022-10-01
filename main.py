@@ -22,7 +22,7 @@ def generate_csv(
                 writer.writerow(
                     {
                         "sentence": example,
-                        "information": "{} {}\n({})".format(name, ipa, definitions),
+                        "information": f"{name} {ipa}\n({definitions})",
                     }
                 )
 
