@@ -39,7 +39,7 @@ def get_sentences_from_args(
 
 def main() -> None:
     words: list[str] = sys.argv[1:]
-    sentences = get_sentences_from_args(words=words)
+    sentences: list[Data] = get_sentences_from_args(words=words)
 
     if not sentences:
         logger.warning("We haven't got any sentences")
