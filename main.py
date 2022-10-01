@@ -18,7 +18,7 @@ def generate_csv(filename: str, sentences_list: list[Data]) -> None:
                 writer.writerow(
                     {
                         "sentence": example,
-                        "information": f"{sentence.name} {sentence.phonetic_notation}\n({sentence.definitions})",
+                        "information": f"{sentence.name} {sentence.phonetic_notation}\n({', '.join(sentence.definitions)})",
                     }
                 )
 
