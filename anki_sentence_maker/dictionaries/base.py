@@ -5,18 +5,16 @@ from bs4 import BeautifulSoup
 
 from anki_sentence_maker.headers import headers
 from exceptions import NoExamplesFoundException, PhoneticNotationNotFoundException
-from utils import str_env
+from utils import int_env, str_env
 from utils.word_separated_by_delimiter import word_separated_by_delimiter
 
 
 class Base(ABC):
-    def __init__(
-        self, word: str, min_examples: int, max_examples: int, max_definitions: int
-    ):
+    def __init__(self, word):
         self._word = word
-        self._min_examples = min_examples
-        self._max_examples = max_examples
-        self._max_definitions = max_definitions
+        self._min_examples = int_env("MINIMUM_EXAMPLES")
+        self._max_examples = int_env("MAXIMUM_EXAMPLES")
+        self._max_definitions = int_env("MAX_DEFINITIONS")
 
     @abstractmethod
     def scrape(self):
