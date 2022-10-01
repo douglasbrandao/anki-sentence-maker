@@ -1,12 +1,18 @@
 import random
 from typing import List
 
+import requests
 from bs4 import BeautifulSoup
-from requests import Response, get
+from requests import Response
 
 from anki_sentence_maker.dictionaries.base import Base
 from anki_sentence_maker.headers import headers
-from exceptions import NoExamplesFound
+from exceptions import (
+    IncorrectlyTypedException,
+    NoExamplesFoundException,
+    PhoneticNotationNotFoundException,
+)
+from logger import logger
 from utils import str_env, word_separated_by_delimiter
 
 
@@ -14,22 +20,26 @@ class Oxford(Base):
     def scrape(self):
         """Scrape the oxford dictionary"""
         word: str = word_separated_by_delimiter(self._word, "-")
-        response: Response = get(str_env("OXFORD_URL") + word, headers=headers)
+        response: Response = requests.get(
+            f"{str_env('OXFORD_URL')}{word}", headers=headers
+        )
 
         if "Word not found in the dictionary" in response.text:
-            raise ValueError(f"Was this word [{word}] typed correctly?")
+            raise IncorrectlyTypedException(f"Was this word [{word}] typed correctly?")
 
-        soup: BeautifulSoup = BeautifulSoup(response.text, "html.parser")
+        soup = BeautifulSoup(response.text, "html.parser")
         name: str = soup.find("h1", attrs={"class": "headword"}).text
 
-        try:
-            full_phonetic_notation: str = soup.find(
-                "span", attrs={"class": "phon"}
-            ).text
-        except AttributeError:
-            word_to_list: List[str] = self._word.split()
-            phonetic: str = self.get_phonetic_notation_from_list(word_to_list)
-            full_phonetic_notation: str = "/{}/".format(phonetic)
+        full_phonetic_notation: str | None = soup.find("span", attrs={"class": "phon"})
+
+        if not full_phonetic_notation:
+            raise PhoneticNotationNotFoundException(
+                "Phonetic notation hasn't been found"
+            )
+
+        word_to_list: List[str] = self._word.split()
+        phonetic: str = self.get_phonetic_notation_from_list(word_to_list)
+        full_phonetic_notation: str = f"/{phonetic}/"
 
         definitions: List[str] = [
             s.text.strip() for s in soup.find_all("span", class_="def")
@@ -42,12 +52,11 @@ class Oxford(Base):
             random.shuffle(examples)
 
         if not examples:
-            raise NoExamplesFound(
-                f"We could not find a good number of examples of [{word}]. Let me try the next one!"
+            raise NoExamplesFoundException(
+                f"We couldn't find a good number of examples of [{word}]."
             )
 
-        print("[WE FOUND IT ON OXFORD!] -> ", end="")
-        print(f"We have found [{word}] on Oxford!")
+        logger.info(f"We have found [{word}] on Oxford")
 
         return {
             "name": name,

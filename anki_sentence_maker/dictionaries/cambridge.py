@@ -1,12 +1,14 @@
 import random
 from typing import List
 
+import requests
 from bs4 import BeautifulSoup
-from requests import Response, get
+from requests import Response
 
 from anki_sentence_maker.dictionaries.base import Base
 from anki_sentence_maker.headers import headers
-from exceptions import NoExamplesFound
+from exceptions import IncorrectlyTypedException, NoExamplesFoundException
+from logger import logger
 from utils import str_env, word_separated_by_delimiter
 
 
@@ -14,15 +16,17 @@ class Cambridge(Base):
     def scrape(self):
         """Scrape the cambridge dictionary"""
         word: str = word_separated_by_delimiter(self._word, "-")
-        response: Response = get(str_env("CAMBRIDGE_URL") + word, headers=headers)
+        response: Response = requests.get(
+            f"{str_env('CAMBRIDGE_URL')}{word}", headers=headers
+        )
 
         if (
             "Search suggestions for" in response.text
             or "Get clear definitions and audio" in response.text
         ):
-            raise ValueError(f"Was this word [{word}] typed correctly?")
+            raise IncorrectlyTypedException(f"Was this word [{word}] typed correctly?")
 
-        soup: BeautifulSoup = BeautifulSoup(response.text, "html.parser")
+        soup = BeautifulSoup(response.text, "html.parser")
         name: str = soup.find("div", attrs={"class": "di-title"}).text
 
         try:
@@ -32,7 +36,7 @@ class Cambridge(Base):
         except IndexError:
             word_to_list = self._word.split()
             phonetic = self.get_phonetic_notation_from_list(word_to_list)
-            full_phonetic_notation = "/{}/".format(phonetic)
+            full_phonetic_notation = f"/{phonetic}/"
 
         definitions: List[str] = [
             s.text.strip().replace(":", "")
@@ -55,12 +59,11 @@ class Cambridge(Base):
             random.shuffle(examples)
 
         if not examples:
-            raise NoExamplesFound(
-                f"It wasn't possible to find a good amount of examples of [{word}]."
+            raise NoExamplesFoundException(
+                f"We couldn't find a good amount of examples of [{word}]."
             )
 
-        print("[WE FOUND IT ON CAMBRIDGE!] -> ", end="")
-        print(f"We have found [{word}] on Cambridge!")
+        logger.info(f"We have found [{word}] on Cambridge")
 
         return {
             "name": name,

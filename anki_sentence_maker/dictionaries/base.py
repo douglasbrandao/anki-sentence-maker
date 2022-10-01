@@ -4,13 +4,15 @@ import requests
 from bs4 import BeautifulSoup
 
 from anki_sentence_maker.headers import headers
-from exceptions import NoExamplesFound
+from exceptions import NoExamplesFoundException, PhoneticNotationNotFoundException
 from utils import str_env
 from utils.word_separated_by_delimiter import word_separated_by_delimiter
 
 
 class Base(ABC):
-    def __init__(self, word, min_examples, max_examples, max_definitions):
+    def __init__(
+        self, word: str, min_examples: int, max_examples: int, max_definitions: int
+    ):
         self._word = word
         self._min_examples = min_examples
         self._max_examples = max_examples
@@ -20,21 +22,23 @@ class Base(ABC):
     def scrape(self):
         """This method must be overridden"""
 
-    def get_phonetic_notation_from_list(*args):
+    def get_phonetic_notation_from_list(self, words: list[str]):
         """Find a phonetic notation IPA on oxford dictionary"""
         full_phonetic_notation: str = ""
-        words = args[0]
         for word in words:
-            response = requests.get(str_env("OXFORD_URL") + word, headers=headers)
+            response = requests.get(f"{str_env('OXFORD_URL')}{word}", headers=headers)
             soup = BeautifulSoup(response.text, "html.parser")
 
             try:
                 phonetic_notation = soup.find("span", attrs={"class": "phon"}).text
                 full_phonetic_notation += f"{phonetic_notation} "
-            except AttributeError as error:
-                return error
-
-        return "".join(c for c in full_phonetic_notation if c not in "\/").rstrip()
+                return "".join(
+                    c for c in full_phonetic_notation if c not in "\/"
+                ).rstrip()
+            except AttributeError:
+                raise PhoneticNotationNotFoundException(
+                    "Phonetic Notation hasn't been found"
+                )
 
     def find_new_examples(self):
         """
@@ -42,11 +46,11 @@ class Base(ABC):
         """
         word: str = word_separated_by_delimiter(self._word, "_")
         response = requests.get(
-            str_env("EXAMPLES_URL") + word + ".html", headers=headers
+            f"{str_env('EXAMPLES_URL')}{word}.html", headers=headers
         )
 
         if "No examples found." in response.text:
-            raise NoExamplesFound("We didn't find examples on WordHippo!")
+            raise NoExamplesFoundException("No examples were found on WordHippo")
 
         soup = BeautifulSoup(response.text, "html.parser")
         table = soup.find("table", attrs={"id": "mainsentencestable"})

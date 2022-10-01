@@ -1,4 +1,10 @@
 from anki_sentence_maker.dictionaries import Cambridge, Oxford
+from exceptions import (
+    IncorrectlyTypedException,
+    NoExamplesFoundException,
+    PhoneticNotationNotFoundException,
+)
+from logger import logger
 from utils import int_env
 
 
@@ -20,23 +26,25 @@ class Maker:
             )
             response = oxford.scrape()
             return response
-        except IndexError as error:
-            print("[NOT ENOUGH EXAMPLES] -> ", end="")
-            print(error)
-        except (ValueError, AttributeError) as error:
-            print("[WE DIDN'T FIND IT ON OXFORD] -> ", end="")
-            print(error)
+        except NoExamplesFoundException as error:
+            logger.error(error)
+        except PhoneticNotationNotFoundException as error:
+            logger.error(error)
+        except IncorrectlyTypedException as error:
+            logger.error(error)
 
         try:
-            oxford = Cambridge(
+            cambridge = Cambridge(
                 self.__word,
                 self.__min_examples,
                 self.__max_examples,
                 self.__max_definitions,
             )
-            response = oxford.scrape()
+            response = cambridge.scrape()
             return response
-        except IndexError as error:
-            print("[NOT ENOUGH EXAMPLES] -> ", end="")
-        except (ValueError, AttributeError) as error:
-            print("[WE DIDN'T FIND IT ON CAMBRIDGE] -> ", end="")
+        except NoExamplesFoundException as error:
+            logger.error(error)
+        except PhoneticNotationNotFoundException as error:
+            logger.error(error)
+        except IncorrectlyTypedException as error:
+            logger.error(error)

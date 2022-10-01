@@ -4,6 +4,7 @@ from datetime import date
 from typing import Dict, List, Union
 
 from anki_sentence_maker.maker import Maker
+from logger import logger
 
 
 def generate_csv(
@@ -25,7 +26,6 @@ def generate_csv(
                         "information": "{} {}\n({})".format(name, ipa, definitions),
                     }
                 )
-        print(f"[{filename}] file was generated!")
 
 
 def grab_sentences_from_args(
@@ -48,12 +48,15 @@ def main() -> None:
     sentences_list = grab_sentences_from_args(words_from_args)
 
     if not sentences_list:
-        print("We didn't receive any return with the list of words you have provided")
+        logger.warning(
+            "We haven't got any sentences with the list of words you provided"
+        )
         return
 
     brazil_date_notation: str = date.today().strftime("%d-%m-%y")
     filename: str = f"sentences-{brazil_date_notation}.csv"
     generate_csv(filename, sentences_list)
+    logger.info(f"{filename} file has been generated")
 
 
 if __name__ == "__main__":
