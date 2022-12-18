@@ -3,14 +3,14 @@ from bs4 import BeautifulSoup
 from bs4.element import PageElement, ResultSet, Tag
 from requests import Response
 
-from anki_sentence_maker.dictionaries.base import Base
+from anki_sentence_maker.bases.scrape import BaseScrape
 from anki_sentence_maker.headers import headers
 from exceptions import IncorrectlyTypedException
 from type.data import Data
 from utils import str_env, word_separated_by_delimiter
 
 
-class Oxford(Base):
+class Oxford(BaseScrape):
     def scrape(self) -> Data:
         """Scrape the oxford dictionary"""
         word: str = word_separated_by_delimiter(self._word, "-")

@@ -2,13 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 from bs4.element import PageElement, ResultSet, Tag
 
-from anki_sentence_maker.dictionaries.base import Base
+from anki_sentence_maker.bases.scrape import BaseScrape
 from anki_sentence_maker.headers import headers
 from exceptions import NoExamplesFoundException
 from utils import str_env, word_separated_by_delimiter
 
 
-class WordHippo(Base):
+class WordHippo(BaseScrape):
     def scrape(self) -> list[str]:
         """
         Go to WordHippo website in order to find new examples to meet the minimum requirements

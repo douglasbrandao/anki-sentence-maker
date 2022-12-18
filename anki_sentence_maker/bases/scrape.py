@@ -9,7 +9,7 @@ from exceptions import PhoneticNotationNotFoundException
 from utils import str_env
 
 
-class Base(ABC):
+class BaseScrape(ABC):
     def __init__(self, word):
         self._word = word
 
