@@ -1,6 +1,6 @@
 import random
 
-from anki_sentence_maker.dictionaries import Cambridge, Oxford, WordHippo
+from anki_sentence_maker.datasources import Cambridge, Oxford, WordHippo, UrbanDictionary
 from exceptions import (
     IncorrectlyTypedException,
     NoExamplesFoundException,
@@ -21,18 +21,18 @@ class Maker:
     def __has_reached_minimum_amount_of_examples(self, examples: list[str]) -> bool:
         return len(examples) > self.__min_examples
 
-    def __get_examples_from_word_hippo(self, word: str) -> list[str]:
+    def __find_more_examples_from_word_hippo(self, word: str) -> list[str]:
         word_hippo = WordHippo(word=word)
-        sentences: list[str] = word_hippo.scrape()
+        sentences: list[str] = word_hippo.retrieve()
         return sentences
 
-    def __get_data(self, data: Data) -> Data:
+    def __get_examples(self, data: Data) -> Data:
 
         if not self.__has_reached_minimum_amount_of_examples(data.examples):
             logger.warning(f"It hasn't reached the minimum number of examples. Wait...")
-            sentences = self.__get_examples_from_word_hippo(self.__word)
+            sentences = self.__find_more_examples_from_word_hippo(self.__word)
             data.examples.extend(list(set(sentences)))
-            return self.__get_data(data)
+            return self.__get_examples(data)
 
         random.shuffle(data.examples)
 
@@ -52,12 +52,12 @@ class Maker:
     def sentence(self) -> Data | None:
         """Try to find the words provided"""
 
-        dictionaries = [Oxford, Cambridge]
+        data_sources = [Cambridge, Oxford, UrbanDictionary]
 
-        for dictionary in dictionaries:
+        for data_source in data_sources:
             try:
-                instance = dictionary(self.__word)
-                return self.__get_data(instance.scrape())
+                instance = data_source(word=self.__word)
+                return self.__get_examples(instance.retrieve())
             except NoExamplesFoundException as error:
                 logger.error(error)
             except PhoneticNotationNotFoundException as error:
