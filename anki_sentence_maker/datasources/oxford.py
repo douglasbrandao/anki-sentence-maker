@@ -1,25 +1,27 @@
 from anki_sentence_maker.bases import ScrapeDataSource
-
+import os
 import requests
 from bs4 import BeautifulSoup
 
 from anki_sentence_maker.headers import headers
 from exceptions import IncorrectlyTypedException
 from type.data import Data
-from utils import get_phonetic_notation_from_list, str_env, word_separated_by_delimiter
+from utils import get_phonetic_notation_from_list, word_separated_by_delimiter
+
 
 class Oxford(ScrapeDataSource):
-
     def scrape(self):
         """Scrape the oxford dictionary"""
 
         word_separated_by_hyphen: str = word_separated_by_delimiter(self.word, "-")
         response = requests.get(
-            f"{str_env('OXFORD_URL')}{word_separated_by_hyphen}", headers=headers
+            f"{os.environ.get('OXFORD_URL')}{word_separated_by_hyphen}", headers=headers
         )
 
         if "Word not found in the dictionary" in response.text:
-            raise IncorrectlyTypedException(f"Was this word [{word_separated_by_hyphen}] typed correctly?")
+            raise IncorrectlyTypedException(
+                f"Was this word [{word_separated_by_hyphen}] typed correctly?"
+            )
 
         soup = BeautifulSoup(response.text, "html.parser")
 
@@ -45,6 +47,6 @@ class Oxford(ScrapeDataSource):
             definitions=definitions,
             examples=examples,
         )
-    
+
     def retrieve(self):
         return self.scrape()

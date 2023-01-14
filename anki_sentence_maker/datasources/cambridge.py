@@ -6,30 +6,32 @@ from bs4 import BeautifulSoup
 from anki_sentence_maker.headers import headers
 from exceptions import IncorrectlyTypedException
 from type.data import Data
-from utils import get_phonetic_notation_from_list, str_env, word_separated_by_delimiter
+from utils import get_phonetic_notation_from_list, word_separated_by_delimiter
+import os
+
 
 class Cambridge(ScrapeDataSource):
-
     def scrape(self):
         """Scrape the cambridge dictionary"""
         word_separated_by_hyphen: str = word_separated_by_delimiter(self.word, "-")
-        response = requests.get(f"{str_env('CAMBRIDGE_URL')}{word_separated_by_hyphen}", headers=headers)
+        response = requests.get(
+            f"{os.environ.get('CAMBRIDGE_URL')}{word_separated_by_hyphen}",
+            headers=headers,
+        )
 
         if (
             "Search suggestions for" in response.text
             or "Get clear definitions and audio" in response.text
         ):
-            raise IncorrectlyTypedException(f"Was this word [{word_separated_by_hyphen}] typed correctly?")
+            raise IncorrectlyTypedException(
+                f"Was this word [{word_separated_by_hyphen}] typed correctly?"
+            )
 
         soup = BeautifulSoup(response.text, "html.parser")
 
         title_div = soup.find("div", attrs={"class": "di-title"})
-        phon_span = soup.select(
-            "span.us.dpron-i > span.pron.dpron", limit=1
-        )
-        definition_div= soup.find_all(
-            "div", class_="def ddef_d db"
-        )
+        phon_span = soup.select("span.us.dpron-i > span.pron.dpron", limit=1)
+        definition_div = soup.find_all("div", class_="def ddef_d db")
         examples_div = soup.find_all("div", class_="examp dexamp")
         dataset_div = soup.find("div", attrs={"id": "dataset-example"})
 
@@ -58,6 +60,6 @@ class Cambridge(ScrapeDataSource):
             definitions=definitions,
             examples=examples,
         )
-    
+
     def retrieve(self):
         return self.scrape()
