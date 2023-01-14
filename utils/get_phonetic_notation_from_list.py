@@ -7,7 +7,7 @@ from anki_sentence_maker.headers import headers
 from exceptions import PhoneticNotationNotFoundException
 
 
-def get_phonetic_notation_from_list(words: list[str]) -> str | None:
+def get_phonetic_notation_from_list(words: list[str]) -> str:
     """Find a phonetic notation IPA on oxford dictionary"""
 
     full_phonetic_notation: str = ""
@@ -24,9 +24,11 @@ def get_phonetic_notation_from_list(words: list[str]) -> str | None:
                 "Phonetic Notation hasn't been found"
             )
 
-        phonetic_notation = phon_span_element.text
-        full_phonetic_notation += f"{phonetic_notation} " f""
+        text = phon_span_element.text
+        full_phonetic_notation += f"{text} "
 
-        print(full_phonetic_notation)
+    phonetic_notation = "".join(
+        c for c in full_phonetic_notation if c not in "\\/"
+    ).rstrip()
 
-    return "".join(c for c in full_phonetic_notation if c not in "\\/").rstrip()
+    return f"/{phonetic_notation}/"
