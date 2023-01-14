@@ -29,8 +29,8 @@ class Cambridge(ScrapeDataSource):
 
         soup = BeautifulSoup(response.text, "html.parser")
 
-        title_div = soup.find("div", attrs={"class": "di-title"})
-        phon_span = soup.select("span.us.dpron-i > span.pron.dpron", limit=1)
+        title_div = soup.find(attrs={"class": "di-title"})
+        phon_span = soup.select("span.pron.dpron", limit=1)
         definition_div = soup.find_all("div", class_="def ddef_d db")
         examples_div = soup.find_all("div", class_="examp dexamp")
         dataset_div = soup.find("div", attrs={"id": "dataset-example"})
@@ -41,13 +41,12 @@ class Cambridge(ScrapeDataSource):
             phonetic_notation = phon_span[0].text
         except IndexError:
             word_to_list = self.word.split()
-            phonetic = get_phonetic_notation_from_list(word_to_list)
-            phonetic_notation = f"/{phonetic}/"
+            phonetic_notation = get_phonetic_notation_from_list(word_to_list)
 
         definitions: list[str] = [
             s.text.strip().replace(":", "") for s in definition_div
         ]
-        examples: list[str] = [s.text for s in examples_div]
+        examples: list[str] = [s.text.strip() for s in examples_div]
 
         if dataset_div:
             examples: list[str] = [
