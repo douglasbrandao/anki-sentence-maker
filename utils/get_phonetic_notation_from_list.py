@@ -26,5 +26,7 @@ def get_phonetic_notation_from_list(words: list[str]) -> str | None:
 
         phonetic_notation = phon_span_element.text
         full_phonetic_notation += f"{phonetic_notation} " f""
+
+        print(full_phonetic_notation)
         
-    return "".join(c for c in full_phonetic_notation if c not in "\/").rstrip()
+    return "".join(c for c in full_phonetic_notation if c not in "\\/").rstrip()
