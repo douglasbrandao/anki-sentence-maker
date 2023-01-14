@@ -1,6 +1,12 @@
+import os
 import random
 
-from anki_sentence_maker.datasources import Cambridge, Oxford, WordHippo, UrbanDictionary
+from anki_sentence_maker.datasources import (
+    Cambridge,
+    Oxford,
+    WordHippo,
+    UrbanDictionary,
+)
 from exceptions import (
     IncorrectlyTypedException,
     NoExamplesFoundException,
@@ -8,15 +14,14 @@ from exceptions import (
 )
 from logger import logger
 from type.data import Data
-from utils import int_env
 
 
 class Maker:
     def __init__(self, word: str):
         self.__word = word
-        self.__min_examples = int_env("MINIMUM_EXAMPLES")
-        self.__max_examples = int_env("MAXIMUM_EXAMPLES")
-        self.__max_definitions = int_env("MAX_DEFINITIONS")
+        self.__min_examples = int(os.environ.get("MINIMUM_EXAMPLES", 3))
+        self.__max_examples = int(os.environ.get("MAXIMUM_EXAMPLES", 5))
+        self.__max_definitions = int(os.environ.get("MAX_DEFINITIONS", 2))
 
     def __has_reached_minimum_amount_of_examples(self, examples: list[str]) -> bool:
         return len(examples) > self.__min_examples

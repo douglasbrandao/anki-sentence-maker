@@ -5,6 +5,9 @@ from datetime import date
 from anki_sentence_maker.maker import Maker
 from logger import logger
 from type.data import Data
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def generate_csv(filename: str, sentences_list: list[Data]) -> None:
