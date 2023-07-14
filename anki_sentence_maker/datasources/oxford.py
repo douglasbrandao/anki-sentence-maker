@@ -35,8 +35,8 @@ class Oxford(ScrapeDataSource):
             word_to_list = self.word.split()
             phonetic_notation = get_phonetic_notation_from_list(word_to_list)
 
-        definitions= [s.text.strip() for s in definitions]
-        examples = [s.text for s in examples]
+        definitions = [d.text.strip() for d in definitions]
+        examples = [e.text.strip().capitalize() for e in examples]
 
         return Data(
             name=name,

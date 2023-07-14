@@ -20,7 +20,7 @@ class WordHippo(ScrapeDataSource):
             raise NoExamplesFoundException(word_separated_by_underscore)
 
         soup = BeautifulSoup(response.text, 'html.parser')
-        sentences = [s.text.strip('\n') for s in soup.select('table#mainsentencestable tr')]
+        sentences = [s.text.strip('\n').capitalize() for s in soup.select('table#mainsentencestable tr')]
         return sentences
 
     def retrieve(self):

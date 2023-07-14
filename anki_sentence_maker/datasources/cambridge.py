@@ -34,7 +34,7 @@ class Cambridge(ScrapeDataSource):
         phonetic_notation = soup.select('span.pron.dpron', limit=1)
         definitions = soup.find_all('div', class_='def ddef_d db')
         examples = soup.find_all('div', class_='examp dexamp')
-        dataset_div = soup.find('div', attrs={'id': 'dataset-example'})
+        dataset_examples = soup.find('div', attrs={'id': 'dataset-example'})
 
         name = title.text if title else ''
 
@@ -44,11 +44,11 @@ class Cambridge(ScrapeDataSource):
             word_to_list = self.word.split()
             phonetic_notation = get_phonetic_notation_from_list(word_to_list)
 
-        definitions = [s.text.strip().replace(':', '') for s in definitions]
-        examples = [s.text.strip() for s in examples]
+        definitions = [d.text.strip().replace(':', '') for d in definitions]
+        examples = [e.text.strip().capitalize() for e in examples]
 
-        if dataset_div:
-            examples = [s.text.strip() for s in soup.find_all('span', class_='deg')]
+        if dataset_examples:
+            examples.extend([e.text.strip().capitalize() for e in soup.find_all('span', class_='deg')])
 
         return Data(
             name=name,
