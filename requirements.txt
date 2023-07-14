@@ -11,7 +11,7 @@ pathspec==0.10.1
 platformdirs==2.5.2
 pydantic==1.8.2
 python-dotenv==0.18.0
-requests==2.26.0
+requests==2.31.0
 soupsieve==2.0
 tomli==2.0.1
 typing-extensions==3.10.0.0
