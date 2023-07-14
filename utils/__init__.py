@@ -1,2 +1,2 @@
-from .word_separated_by_delimiter import word_separated_by_delimiter
+from .get_word_separated_by_delimiter import get_word_separated_by_delimiter
 from .get_phonetic_notation_from_list import get_phonetic_notation_from_list

@@ -1,11 +1,7 @@
-import os
-import random
-
-from anki_sentence_maker.datasources import (
+from .datasources import (
     Cambridge,
     Oxford,
     WordHippo,
-    UrbanDictionary,
 )
 from exceptions import (
     IncorrectlyTypedException,
@@ -13,29 +9,32 @@ from exceptions import (
     PhoneticNotationNotFoundException,
 )
 from logger import logger
-from type.data import Data
+from type import Data
 
+import os
+import random
+
+from anki_sentence_maker.bases import DataSource
 
 class Maker:
     def __init__(self, word: str):
         self.__word = word
-        self.__min_examples = int(os.environ.get("MINIMUM_EXAMPLES", 3))
-        self.__max_examples = int(os.environ.get("MAXIMUM_EXAMPLES", 5))
-        self.__max_definitions = int(os.environ.get("MAX_DEFINITIONS", 2))
+        self.__min_examples = int(os.getenv('MINIMUM_EXAMPLES', 3))
+        self.__max_examples = int(os.getenv('MAXIMUM_EXAMPLES', 5))
+        self.__max_definitions = int(os.getenv('MAX_DEFINITIONS', 2))
 
-    def __has_reached_minimum_amount_of_examples(self, examples: list[str]) -> bool:
+    def __has_reached_minimum_number_of_examples(self, examples: list[str]) -> bool:
         return len(examples) > self.__min_examples
 
-    def __find_more_examples_from_word_hippo(self, word: str) -> list[str]:
+    def __find_more_examples_on_word_hippo(self, word: str) -> list[str]:
         word_hippo = WordHippo(word=word)
-        sentences: list[str] = word_hippo.retrieve()
+        sentences = word_hippo.retrieve()
         return sentences
 
     def __get_examples(self, data: Data) -> Data:
-
-        if not self.__has_reached_minimum_amount_of_examples(data.examples):
-            logger.warning(f"It hasn't reached the minimum number of examples. Wait...")
-            sentences = self.__find_more_examples_from_word_hippo(self.__word)
+        if not self.__has_reached_minimum_number_of_examples(data.examples):
+            logger.warning(f'It hasn\'t reached the minimum number of examples. Wait...')
+            sentences = self.__find_more_examples_on_word_hippo(self.__word)
             data.examples.extend(list(set(sentences)))
             return self.__get_examples(data)
 
@@ -44,25 +43,26 @@ class Maker:
         if not data.examples:
             raise NoExamplesFoundException(self.__word)
 
-        logger.info(f"[{self.__word}] found!")
+        logger.info(f'[{self.__word}] found!')
 
         return Data(
             name=data.name,
             phonetic_notation=data.phonetic_notation,
-            definitions=data.definitions[: self.__max_definitions],
-            examples=data.examples[: self.__max_examples],
+            definitions=data.definitions[:self.__max_definitions],
+            examples=data.examples[:self.__max_examples],
         )
 
     @property
     def sentence(self) -> Data | None:
-        """Try to find the words provided"""
+        '''Find examples with the given words'''
 
-        data_sources = [Cambridge, Oxford, UrbanDictionary]
+        data_sources: list[DataSource] = [Cambridge, Oxford]
 
         for data_source in data_sources:
             try:
                 instance = data_source(word=self.__word)
-                return self.__get_examples(instance.retrieve())
+                data = instance.retrieve()
+                return self.__get_examples(data)
             except NoExamplesFoundException as error:
                 logger.error(error)
             except PhoneticNotationNotFoundException as error:

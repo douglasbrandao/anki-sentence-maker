@@ -6,6 +6,10 @@ class DataSource(ABC):
     def __init__(self, word: str) -> None:
         self.word = word
 
+    @classmethod
+    def get_classname(cls):
+        return cls.__name__
+
     @abstractclassmethod
     def retrieve():
         pass

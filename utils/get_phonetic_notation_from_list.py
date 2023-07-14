@@ -1,34 +1,28 @@
-import os
-
-import requests
-from bs4 import BeautifulSoup
-
 from anki_sentence_maker.headers import headers
+from bs4 import BeautifulSoup
 from exceptions import PhoneticNotationNotFoundException
+
+import os
+import re
+import requests
 
 
 def get_phonetic_notation_from_list(words: list[str]) -> str:
-    """Find a phonetic notation IPA on oxford dictionary"""
-
-    full_phonetic_notation: str = ""
+    '''Find a phonetic notation IPA on oxford dictionary'''
+    phonetic_notation = ''
 
     for word in words:
         response = requests.get(
-            f"{os.environ.get('OXFORD_URL')}{word}", headers=headers
+            f'{os.getenv("OXFORD_URL")}{word}',
+            headers=headers
         )
-        soup = BeautifulSoup(response.text, "html.parser")
-        phon_span_element = soup.find("span", attrs={"class": "phon"})
+        soup = BeautifulSoup(response.text, 'html.parser')
+        phon = soup.find('span', attrs={'class': 'phon'})
 
-        if not phon_span_element:
-            raise PhoneticNotationNotFoundException(
-                "Phonetic Notation hasn't been found"
-            )
+        if not phon:
+            raise PhoneticNotationNotFoundException(word)
 
-        text = phon_span_element.text
-        full_phonetic_notation += f"{text} "
+        phonetic_notation += f'{phon.get_text()} '
 
-    phonetic_notation = "".join(
-        c for c in full_phonetic_notation if c not in "\\/"
-    ).rstrip()
-
-    return f"/{phonetic_notation}/"
+    phonetic_notation = re.sub('[\/]', '', phonetic_notation).strip()
+    return f'/{phonetic_notation}/'

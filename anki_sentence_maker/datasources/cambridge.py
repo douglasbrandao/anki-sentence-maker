@@ -1,57 +1,54 @@
 from anki_sentence_maker.bases import ScrapeDataSource
-
-import requests
-from bs4 import BeautifulSoup
-
 from anki_sentence_maker.headers import headers
+from bs4 import BeautifulSoup
 from exceptions import IncorrectlyTypedException
-from type.data import Data
-from utils import get_phonetic_notation_from_list, word_separated_by_delimiter
+from type import Data
+from utils import (
+    get_phonetic_notation_from_list,
+    get_word_separated_by_delimiter
+)
+
 import os
+import requests
 
 
 class Cambridge(ScrapeDataSource):
     def scrape(self):
-        """Scrape the cambridge dictionary"""
-        word_separated_by_hyphen: str = word_separated_by_delimiter(self.word, "-")
+        '''Scrape the cambridge dictionary'''
+        word_separated_by_hyphen: str = get_word_separated_by_delimiter(self.word, '-')
         response = requests.get(
-            f"{os.environ.get('CAMBRIDGE_URL')}{word_separated_by_hyphen}",
+            f'{os.getenv("CAMBRIDGE_URL")}{word_separated_by_hyphen}',
             headers=headers,
         )
 
         if (
-            "Search suggestions for" in response.text
-            or "Get clear definitions and audio" in response.text
+            'Search suggestions for' in response.text
+            or
+            'Get clear definitions and audio' in response.text
         ):
-            raise IncorrectlyTypedException(
-                f"Was this word [{word_separated_by_hyphen}] typed correctly?"
-            )
+            raise IncorrectlyTypedException(Cambridge.get_classname(), word_separated_by_hyphen)
 
-        soup = BeautifulSoup(response.text, "html.parser")
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-        title_div = soup.find(attrs={"class": "di-title"})
-        phon_span = soup.select("span.pron.dpron", limit=1)
-        definition_div = soup.find_all("div", class_="def ddef_d db")
-        examples_div = soup.find_all("div", class_="examp dexamp")
-        dataset_div = soup.find("div", attrs={"id": "dataset-example"})
+        title = soup.find(attrs={'class': 'di-title'})
+        phonetic_notation = soup.select('span.pron.dpron', limit=1)
+        definitions = soup.find_all('div', class_='def ddef_d db')
+        examples = soup.find_all('div', class_='examp dexamp')
+        dataset_div = soup.find('div', attrs={'id': 'dataset-example'})
 
-        name: str = title_div.text if title_div else ""
+        name = title.text if title else ''
 
         try:
-            phonetic_notation = phon_span[0].text
+            phonetic_notation = phonetic_notation[0].text
         except IndexError:
             word_to_list = self.word.split()
             phonetic_notation = get_phonetic_notation_from_list(word_to_list)
 
-        definitions: list[str] = [
-            s.text.strip().replace(":", "") for s in definition_div
-        ]
-        examples: list[str] = [s.text.strip() for s in examples_div]
+        definitions = [s.text.strip().replace(':', '') for s in definitions]
+        examples = [s.text.strip() for s in examples]
 
         if dataset_div:
-            examples: list[str] = [
-                s.text.strip() for s in soup.find_all("span", class_="deg")
-            ]
+            examples = [s.text.strip() for s in soup.find_all('span', class_='deg')]
 
         return Data(
             name=name,
