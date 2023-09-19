@@ -57,5 +57,3 @@ class Cambridge(ScrapeDataSource):
             examples=examples,
         )
 
-    def retrieve(self):
-        return self.scrape()

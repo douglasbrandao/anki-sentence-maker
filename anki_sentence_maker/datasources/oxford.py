@@ -45,5 +45,3 @@ class Oxford(ScrapeDataSource):
             examples=examples,
         )
 
-    def retrieve(self):
-        return self.scrape()

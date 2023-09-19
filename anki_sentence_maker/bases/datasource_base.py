@@ -20,8 +20,15 @@ class ScrapeDataSource(DataSource):
     def scrape():
         pass
 
+    def retrieve(self):
+        return self.scrape()
+
 
 class RestAPIDataSource(DataSource):
     @abstractclassmethod
     def get():
         pass
+
+    def retrieve(self):
+        return self.get()
+

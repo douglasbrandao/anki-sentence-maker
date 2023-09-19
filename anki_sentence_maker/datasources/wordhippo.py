@@ -23,5 +23,3 @@ class WordHippo(ScrapeDataSource):
         sentences = [s.text.strip('\n').capitalize() for s in soup.select('table#mainsentencestable tr')]
         return sentences
 
-    def retrieve(self):
-        return self.scrape()
