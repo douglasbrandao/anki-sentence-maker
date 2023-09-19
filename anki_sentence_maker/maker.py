@@ -17,11 +17,17 @@ import random
 from anki_sentence_maker.bases import DataSource
 
 class Maker:
-    def __init__(self, word: str):
+    def __init__(
+            self,
+            word: str,
+            min_examples: int = 2,
+            max_examples: int = 5,
+            max_definitions: int = 3
+        ):
         self.__word = word
-        self.__min_examples = int(os.getenv('MINIMUM_EXAMPLES', 3))
-        self.__max_examples = int(os.getenv('MAXIMUM_EXAMPLES', 5))
-        self.__max_definitions = int(os.getenv('MAX_DEFINITIONS', 2))
+        self.__min_examples = min_examples
+        self.__max_examples = max_examples
+        self.__max_definitions = max_definitions
 
     def __has_reached_minimum_number_of_examples(self, examples: list[str]) -> bool:
         return len(examples) > self.__min_examples

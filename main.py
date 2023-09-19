@@ -1,13 +1,11 @@
-import sys
 from csv import DictWriter
 from datetime import date
 
 from anki_sentence_maker.maker import Maker
 from logger import logger
 from type.data import Data
-from dotenv import load_dotenv
 
-load_dotenv()
+import sys
 
 def generate_csv(filename: str, sentences_list: list[Data]) -> None:
     """Generate a csv file with list of sentences"""
