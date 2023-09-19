@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 def generate_csv(filename: str, sentences_list: list[Data]) -> None:
     """Generate a csv file with list of sentences"""
     with open(filename, "w", encoding="utf-8-sig", newline="") as file:

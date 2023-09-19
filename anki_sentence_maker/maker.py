@@ -33,7 +33,7 @@ class Maker:
 
     def __get_examples(self, data: Data) -> Data:
         if not self.__has_reached_minimum_number_of_examples(data.examples):
-            logger.warning(f'It hasn\'t reached the minimum number of examples. Wait...')
+            logger.warning(f"It hasn't reached the minimum number of examples. Wait.")
             sentences = self.__find_more_examples_on_word_hippo(self.__word)
             data.examples.extend(list(set(sentences)))
             return self.__get_examples(data)
@@ -43,7 +43,7 @@ class Maker:
         if not data.examples:
             raise NoExamplesFoundException(self.__word)
 
-        logger.info(f'[{self.__word}] found!')
+        logger.info(f"[{self.__word}] found!")
 
         return Data(
             name=data.name,
@@ -54,7 +54,7 @@ class Maker:
 
     @property
     def sentence(self) -> Data | None:
-        '''Find examples with the given words'''
+        """Find examples with the given words"""
 
         data_sources: list[DataSource] = [Cambridge, Oxford]
 

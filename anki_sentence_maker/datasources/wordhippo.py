@@ -9,11 +9,11 @@ import requests
 
 class WordHippo(ScrapeDataSource):
     def scrape(self):
-        '''Go to WordHippo website in order to find new examples to meet the minimum requirements'''
+        """Go to WordHippo website to find new examples and meet the minimum requirements"""
         word_in_kebab_case = get_word_separated_by_delimiter(self.word, '_')
         response = requests.get(f'{os.getenv("EXAMPLES_URL")}{word_in_kebab_case}.html', headers=headers)
 
-        if 'No examples found' in response.text:
+        if "No examples found" in response.text:
             raise NoExamplesFoundException(word_in_kebab_case)
 
         soup = BeautifulSoup(response.text, 'html.parser')

@@ -8,14 +8,11 @@ import requests
 
 
 def get_phonetic_notation_from_list(words: list[str]) -> str:
-    '''Find a phonetic notation IPA on oxford dictionary'''
+    """Find a phonetic notation IPA on oxford dictionary"""
     phonetic_notation = ''
 
     for word in words:
-        response = requests.get(
-            f'{os.getenv("OXFORD_URL")}{word}',
-            headers=headers
-        )
+        response = requests.get(f'{os.getenv("OXFORD_URL")}{word}', headers=headers)
         soup = BeautifulSoup(response.text, 'html.parser')
         phon = soup.find('span', attrs={'class': 'phon'})
 

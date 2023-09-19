@@ -10,11 +10,11 @@ import requests
 
 class Oxford(ScrapeDataSource):
     def scrape(self):
-        '''Scrape the oxford dictionary'''
+        """Scrape the oxford dictionary"""
         word_in_kebab_case = get_word_separated_by_delimiter(self.word, '-')
         response = requests.get(f'{os.getenv("OXFORD_URL")}{word_in_kebab_case}', headers=headers)
 
-        if not 'Definition of' in response.text:
+        if not "Definition of" in response.text:
             raise IncorrectlyTypedException(Oxford.get_classname(), word_in_kebab_case)
 
         soup = BeautifulSoup(response.text, 'html.parser')

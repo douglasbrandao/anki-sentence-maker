@@ -9,17 +9,16 @@ from utils import (
 )
 
 import os
-import re
 import requests
 
 
 class Cambridge(ScrapeDataSource):
     def scrape(self):
-        '''Scrape the cambridge dictionary'''
+        """Scrape the cambridge dictionary"""
         word_in_kebab_case: str = get_word_separated_by_delimiter(self.word, '-')
         response = requests.get(f'{os.getenv("CAMBRIDGE_URL")}{word_in_kebab_case}', headers=headers)
 
-        if not 'meaning of' in response.text:
+        if not "meaning of" in response.text:
             raise IncorrectlyTypedException(Cambridge.get_classname(), word_in_kebab_case)
 
         soup = BeautifulSoup(response.text, 'html.parser')
