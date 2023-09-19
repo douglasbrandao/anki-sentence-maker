@@ -11,15 +11,11 @@ import requests
 class Oxford(ScrapeDataSource):
     def scrape(self):
         '''Scrape the oxford dictionary'''
-        word_separated_by_hyphen = get_word_separated_by_delimiter(self.word, '-')
+        word_in_kebab_case = get_word_separated_by_delimiter(self.word, '-')
+        response = requests.get(f'{os.getenv("OXFORD_URL")}{word_in_kebab_case}', headers=headers)
 
-        response = requests.get(
-            f'{os.getenv("OXFORD_URL")}{word_separated_by_hyphen}',
-            headers=headers
-        )
-
-        if 'Word not found in the dictionary' in response.text:
-            raise IncorrectlyTypedException(Oxford.get_classname(), word_separated_by_hyphen)
+        if not 'Definition of' in response.text:
+            raise IncorrectlyTypedException(Oxford.get_classname(), word_in_kebab_case)
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -28,7 +24,6 @@ class Oxford(ScrapeDataSource):
         definitions = soup.find_all('span', class_='def')
         examples = soup.select('ul.examples > li > span.x')
 
-        name = title.text if title else ''
         phonetic_notation = phonetic_notation.text if phonetic_notation else ''
 
         if not phonetic_notation:
@@ -39,7 +34,7 @@ class Oxford(ScrapeDataSource):
         examples = [e.text.strip().capitalize() for e in examples]
 
         return Data(
-            name=name,
+            name=title.text if title else '',
             phonetic_notation=phonetic_notation,
             definitions=definitions,
             examples=examples,

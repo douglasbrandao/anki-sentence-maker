@@ -9,24 +9,18 @@ from utils import (
 )
 
 import os
+import re
 import requests
 
 
 class Cambridge(ScrapeDataSource):
     def scrape(self):
         '''Scrape the cambridge dictionary'''
-        word_separated_by_hyphen: str = get_word_separated_by_delimiter(self.word, '-')
-        response = requests.get(
-            f'{os.getenv("CAMBRIDGE_URL")}{word_separated_by_hyphen}',
-            headers=headers,
-        )
+        word_in_kebab_case: str = get_word_separated_by_delimiter(self.word, '-')
+        response = requests.get(f'{os.getenv("CAMBRIDGE_URL")}{word_in_kebab_case}', headers=headers)
 
-        if (
-            'Search suggestions for' in response.text
-            or
-            'Get clear definitions and audio' in response.text
-        ):
-            raise IncorrectlyTypedException(Cambridge.get_classname(), word_separated_by_hyphen)
+        if not 'meaning of' in response.text:
+            raise IncorrectlyTypedException(Cambridge.get_classname(), word_in_kebab_case)
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -35,8 +29,6 @@ class Cambridge(ScrapeDataSource):
         definitions = soup.find_all('div', class_='def ddef_d db')
         examples = soup.find_all('div', class_='examp dexamp')
         dataset_examples = soup.find('div', attrs={'id': 'dataset-example'})
-
-        name = title.text if title else ''
 
         try:
             phonetic_notation = phonetic_notation[0].text
@@ -51,7 +43,7 @@ class Cambridge(ScrapeDataSource):
             examples.extend([e.text.strip().capitalize() for e in soup.find_all('span', class_='deg')])
 
         return Data(
-            name=name,
+            name=title.text if title else '',
             phonetic_notation=phonetic_notation,
             definitions=definitions,
             examples=examples,
