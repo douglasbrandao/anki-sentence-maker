@@ -11,7 +11,6 @@ from exceptions import (
 from logger import logger
 from type import Data
 
-import os
 import random
 
 from anki_sentence_maker.bases import DataSource
@@ -61,7 +60,6 @@ class Maker:
     @property
     def sentence(self) -> Data | None:
         """Find examples with the given words"""
-
         data_sources: list[DataSource] = [Cambridge, Oxford]
 
         for data_source in data_sources:
