@@ -20,5 +20,5 @@ def get_phonetic_notation_from_list(words: list[str]) -> str:
 
         phonetic_notation += f'{phon.get_text()} '
 
-    phonetic_notation = re.sub('[\/]', '', phonetic_notation).strip()
+    phonetic_notation = re.sub('[\\/]', '', phonetic_notation).strip()
     return f'/{phonetic_notation}/'
