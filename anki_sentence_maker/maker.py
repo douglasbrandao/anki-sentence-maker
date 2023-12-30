@@ -15,6 +15,7 @@ import random
 
 from anki_sentence_maker.bases import DataSource
 
+
 class Maker:
     def __init__(
             self,
@@ -22,13 +23,16 @@ class Maker:
             min_examples: int = 2,
             max_examples: int = 5,
             max_definitions: int = 3
-        ):
+    ):
         self.__word = word
         self.__min_examples = min_examples
         self.__max_examples = max_examples
         self.__max_definitions = max_definitions
 
-    def __has_reached_minimum_number_of_examples(self, examples: list[str]) -> bool:
+    def __has_reached_minimum_number_of_examples(
+            self,
+            examples: list[str]
+    ) -> bool:
         return len(examples) > self.__min_examples
 
     def __find_more_examples_on_word_hippo(self, word: str) -> list[str]:
@@ -38,7 +42,9 @@ class Maker:
 
     def __get_examples(self, data: Data) -> Data:
         if not self.__has_reached_minimum_number_of_examples(data.examples):
-            logger.warning(f"It hasn't reached the minimum number of examples. Wait.")
+            logger.warning(
+                "It hasn't reached the minimum number of examples. Wait."
+            )
             sentences = self.__find_more_examples_on_word_hippo(self.__word)
             data.examples.extend(list(set(sentences)))
             return self.__get_examples(data)

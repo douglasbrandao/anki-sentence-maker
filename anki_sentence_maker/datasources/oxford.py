@@ -3,18 +3,30 @@ from anki_sentence_maker.headers import headers
 from bs4 import BeautifulSoup
 from exceptions import IncorrectlyTypedException
 from type import Data
-from utils import get_phonetic_notation_from_list, get_word_separated_by_delimiter
+from utils import (
+    get_phonetic_notation_from_list,
+    get_word_separated_by_delimiter
+)
 
 import requests
+
+url = 'https://www.oxfordlearnersdictionaries.com/us/definition/english/'
+
 
 class Oxford(ScrapeDataSource):
     def scrape(self):
         """Scrape the oxford dictionary"""
         word_in_kebab_case = get_word_separated_by_delimiter(self.word, '-')
-        response = requests.get(f'https://www.oxfordlearnersdictionaries.com/us/definition/english/{word_in_kebab_case}', headers=headers)
+        response = requests.get(
+            url + word_in_kebab_case,
+            headers=headers
+        )
 
-        if not "Definition of" in response.text:
-            raise IncorrectlyTypedException(Oxford.get_classname(), word_in_kebab_case)
+        if "Definition of" not in response.text:
+            raise IncorrectlyTypedException(
+                Oxford.get_classname(),
+                word_in_kebab_case
+            )
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -38,4 +50,3 @@ class Oxford(ScrapeDataSource):
             definitions=definitions,
             examples=examples,
         )
-

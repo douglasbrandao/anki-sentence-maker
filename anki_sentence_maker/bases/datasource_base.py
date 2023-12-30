@@ -1,5 +1,4 @@
 from abc import ABC, abstractclassmethod
-from type.data import Data
 
 
 class DataSource(ABC):
@@ -31,4 +30,3 @@ class RestAPIDataSource(DataSource):
 
     def retrieve(self):
         return self.get()
-

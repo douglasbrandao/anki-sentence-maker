@@ -10,14 +10,22 @@ from utils import (
 
 import requests
 
+url = 'https://dictionary.cambridge.org/dictionary/english/'
+
+
 class Cambridge(ScrapeDataSource):
     def scrape(self):
         """Scrape the cambridge dictionary"""
-        word_in_kebab_case: str = get_word_separated_by_delimiter(self.word, '-')
-        response = requests.get(f'https://dictionary.cambridge.org/dictionary/english/{word_in_kebab_case}', headers=headers)
+        word_in_kebab_case: str = get_word_separated_by_delimiter(
+            self.word, '-'
+        )
+        response = requests.get(url + word_in_kebab_case, headers=headers)
 
-        if not "Meaning of" in response.text:
-            raise IncorrectlyTypedException(Cambridge.get_classname(), word_in_kebab_case)
+        if "Meaning of" not in response.text:
+            raise IncorrectlyTypedException(
+                Cambridge.get_classname(),
+                word_in_kebab_case
+            )
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -37,7 +45,14 @@ class Cambridge(ScrapeDataSource):
         examples = [e.text.strip().capitalize() for e in examples]
 
         if dataset_examples:
-            examples.extend([e.text.strip().capitalize() for e in soup.find_all('span', class_='deg')])
+            examples.extend(
+                [
+                    e.text.strip().capitalize() for e in soup.find_all(
+                        'span',
+                        class_='deg'
+                    )
+                ]
+            )
 
         return Data(
             name=title.text if title else '',
@@ -45,4 +60,3 @@ class Cambridge(ScrapeDataSource):
             definitions=definitions,
             examples=examples,
         )
-

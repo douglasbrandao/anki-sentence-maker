@@ -7,20 +7,23 @@ from type.data import Data
 
 import sys
 
-def generate_csv(filename: str, sentences_list: list[Data]) -> None:
+
+def generate_csv(filename: str, sentences: list[Data]) -> None:
     """Generate a csv file with list of sentences"""
     with open(filename, "w", encoding="utf-8-sig", newline="") as file:
         fieldnames: list[str] = ["sentence", "information"]
         writer: DictWriter = DictWriter(file, fieldnames=fieldnames)
 
-        for sentence in sentences_list:
-            for example in sentence.examples:
-                writer.writerow(
-                    {
-                        "sentence": example,
-                        "information": f"{sentence.name} {sentence.phonetic_notation}\n({', '.join(sentence.definitions)})",
-                    }
-                )
+        for s in sentences:
+            for e in s.examples:
+                example = e
+                info = f"{s.name}  \
+                {s.phonetic_notation}\n \
+                ({', '.join(s.definitions)})"
+                writer.writerow({
+                    "sentence": example,
+                    "information": info
+                })
 
 
 def get_sentences_from_args(
