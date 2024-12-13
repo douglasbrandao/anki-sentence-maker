@@ -1,11 +1,10 @@
+import sys
 from csv import DictWriter
 from datetime import date
 
 from anki_sentence_maker.maker import Maker
 from logger import logger
 from type.data import Data
-
-import sys
 
 
 def generate_csv(filename: str, sentences: list[Data]) -> None:
@@ -20,15 +19,10 @@ def generate_csv(filename: str, sentences: list[Data]) -> None:
                 info = f"{s.name}  \
                 {s.phonetic_notation}\n \
                 ({', '.join(s.definitions)})"
-                writer.writerow({
-                    "sentence": example,
-                    "information": info
-                })
+                writer.writerow({"sentence": example, "information": info})
 
 
-def get_sentences_from_args(
-    words: list[str],
-) -> list[Data]:
+def get_sentences_from_args(words: list[str]) -> list[Data]:
     """Get sentences with the words provided"""
     sentences_list = []
 
@@ -45,7 +39,7 @@ def main() -> None:
     sentences: list[Data] = get_sentences_from_args(words=words)
 
     if not sentences:
-        logger.warning("We haven't got any sentences")
+        logger.warning("  We haven't got any sentences")
     else:
         brazil_date_notation: str = date.today().strftime("%d-%m-%y")
         filename: str = f"sentences-{brazil_date_notation}.csv"

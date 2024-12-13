@@ -1,0 +1,7 @@
+[flake8]
+max-line-length = 80
+max-doc-length = 80
+indent-size = 2
+exclude = 
+      .git,
+      __pycache__
