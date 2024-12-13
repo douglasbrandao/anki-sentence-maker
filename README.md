@@ -1,6 +1,12 @@
 # Anki Sentence Maker
 
-Anki Sentence Maker is a personal project that has helped me increase my vocabulary in english, and it stemmed from a matter of preference in how I import my sentences on Anki.
+**Anki Sentence Maker** is a personal project that helped me increase my vocabulary in english and it stemmed in how I conduct my study:
+- Listen to a new word
+- Look it up in an online dictionary
+- Save in a csv file
+- Import on my Anki
+
+I know that AI could do it more easily, but I'm an old fashioned guy 🤠
 
 ## Requirements
 
@@ -21,26 +27,26 @@ After install all the packages, you can run the main.py file passing the argumen
 python3 main.py desecrate meaning
 ```
 
-In case of look expressions up separated by spaces, wrap it up with quotation marks
+In case you are searching expressions separated by spaces, wrap it up with quotation marks
 > Example: a means to an end
 
 ```
 python3 main.py desecrate "a means to and end" meaning
 ```
 
-The script will try to find these words, and it is going to save into the root folder in the format below
+The script will try to find these words, and it will save into the root folder following the format below
 
 ```
 sentences-25-04-2020.csv
 ```
 
-And that is it. You can import in your Anki using the csv file.
+And that's it. You can import the .csv file in your Anki.
 
-## How it is going to work
+## How it works
 
-* User will give a list of words
-* The script will look it up in a variety of dictionaries
-* The script will create a .csv file with rows in the format below
+* User provide a list of words
+* The script look it up in several online dictionaries
+* The script create a .csv file with rows following the format below
 
 ## Card format
 
@@ -48,20 +54,16 @@ And that is it. You can import in your Anki using the csv file.
 |:-------------:|:-------------:|
 |He played with the band at a recent gig.| gig /ɡɪɡ/ (a performance by musicians playing popular music or jazz in front of an audience; a similar performance by a comedian)|
 
-> This way, we have the information about the word that we would like to learn as a short definition about it and its phonetic notation.
+> This way we have the information about the word such as a short definition and its phonetic notation.
 
-## Dictionaries under implementation
+## Dictionaries implemented
 
 * Cambridge Dictionary
 * Oxford Dictionary
 
-## Need to be implemented
-
-* Collins Dictionary, MacMillan, etc.
-
 ## To the future
 
-* Develop an easier interface to use
+* Collins Dictionary, MacMillan, etc.
 
 ## Author
 
