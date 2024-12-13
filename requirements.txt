@@ -18,4 +18,4 @@ requests==2.26.0
 soupsieve==2.0
 tomli==2.0.1
 typing-extensions==3.10.0.0
-urllib3==1.26.17
+urllib3==1.26.19
