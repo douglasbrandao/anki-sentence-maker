@@ -6,3 +6,4 @@ exclude =
       .git,
       __pycache__
 ignore = F401
+extend-select = B950
