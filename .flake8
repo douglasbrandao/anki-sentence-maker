@@ -5,3 +5,5 @@ indent-size = 2
 exclude = 
       .git,
       __pycache__
+extend-ignore = F401
+extend-select = B950

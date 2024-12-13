@@ -18,11 +18,11 @@ from anki_sentence_maker.bases import DataSource
 
 class Maker:
     def __init__(
-            self,
-            word: str,
-            min_examples: int = 2,
-            max_examples: int = 5,
-            max_definitions: int = 3
+        self,
+        word: str,
+        min_examples: int = 2,
+        max_examples: int = 5,
+        max_definitions: int = 3,
     ):
         self.__word = word
         self.__min_examples = min_examples
@@ -30,8 +30,7 @@ class Maker:
         self.__max_definitions = max_definitions
 
     def __has_reached_minimum_number_of_examples(
-            self,
-            examples: list[str]
+        self, examples: list[str]
     ) -> bool:
         return len(examples) > self.__min_examples
 
@@ -59,8 +58,8 @@ class Maker:
         return Data(
             name=data.name,
             phonetic_notation=data.phonetic_notation,
-            definitions=data.definitions[:self.__max_definitions],
-            examples=data.examples[:self.__max_examples],
+            definitions=data.definitions[: self.__max_definitions],
+            examples=data.examples[: self.__max_examples],
         )
 
     @property
