@@ -1,7 +1,14 @@
 attrs==24.2.0
+beautifulsoup4==4.12.3
+certifi==2024.8.30
+charset-normalizer==3.4.0
 flake8==7.1.1
 flake8-bugbear==24.12.12
+idna==3.10
 mccabe==0.7.0
 pycodestyle==2.12.1
 pyflakes==3.2.0
+requests==2.32.3
+soupsieve==2.6
 typing_extensions==4.12.2
+urllib3==2.2.3
